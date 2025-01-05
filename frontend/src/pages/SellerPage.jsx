@@ -4,7 +4,7 @@ import axios from 'axios';
 //import { Link } from 'react-router-dom';
 import UpdateProduct from './UpdateProduct';
 
-const Products = () => {
+const SellerPage = () => {
     const [products, setProducts] = useState([]);
     //products value is setProduct and setProduct value comes from the fetchAllProduct function that fetches data from products table
     const [category, setCategory] = useState([]); 
@@ -166,4 +166,4 @@ const Products = () => {
         </div>
     );
 };
-export default Products;
+export default SellerPage;

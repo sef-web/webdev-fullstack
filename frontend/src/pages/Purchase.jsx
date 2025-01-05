@@ -9,7 +9,7 @@ const Purchase = () => {
     const location = useLocation();
     const productId = location.pathname.split("/")[2]; // Extract product ID from URL
 
-    useEffect(() => {
+    useEffect(() => {A
         // Fetch the product details
         const fetchProduct = async () => {
             try {

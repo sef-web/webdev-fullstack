@@ -1,3 +1,4 @@
+
 import {
   BrowserRouter,
   Routes,
@@ -9,19 +10,21 @@ import Signup from "./pages/authentication/Signup";
 import Login from "./pages/authentication/Login";
 
 //seller
-import Products from "./pages/Products";
+import SellerPage from "./pages/SellerPage";
 import UpdateProduct from "./pages/UpdateProduct";
 
 //buyer
 import BuyerPage from "./pages/buyer_dashboard/BuyerPage";
 import BuyerCart from "./pages/buyer_dashboard/BuyerCart";
+
 //designs
 import "./style.css";
-import "./LoginDes.css"
+import "./LoginDes.css";
 import "./signUp.css";
 import "./welcomePage.css";
-import "./productCard.css"
-
+import "./productCard.css";
+import "./buyerCartStyles.css";
+import "./confirmOrder.css"
 
 function App() {
   return (
@@ -36,7 +39,7 @@ function App() {
           <Route path="/login" element={<Login />}/>
 
           {/* Seller side */}
-          <Route path="/products" element={<Products/>}/>
+          <Route path="/sellerpage" element={<SellerPage/>}/>
           <Route path="/update/:id" element={<UpdateProduct />} />
 
           {/* Buyer-Specific Routes */}

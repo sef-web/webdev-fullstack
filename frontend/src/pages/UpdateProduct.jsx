@@ -21,8 +21,7 @@ const EditProduct = ({ product, onClose, onSave }) => {
                 <div className="form-container">
                     <div className="form-row">
                         <label htmlFor="prod_name">Product Name:</label>
-                        <input
-                            type="text"
+                        <input type="text"
                             id="prod_name"
                             name="prod_name"
                             placeholder="Product Name"
