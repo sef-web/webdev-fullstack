@@ -132,7 +132,7 @@ const BuyerPage = () => {
         <select value={selectedCategoryId} onChange={(e) => setSelectedCategoryId(e.target.value)}>
           <option value="">All Categories</option>
           {categories.map((category) => (
-            <option key={category.cat_id} value={category.cat_id}>
+            <option key={category.id} value={category.id}>
               {category.cat_name}
             </option>
           ))}
@@ -159,6 +159,7 @@ const BuyerPage = () => {
             <span className="stocks">stock: {item.quantity} <br /> </span> 
             <span className="price">${item.price}</span>
             <span className="rating">Rating: {item.rating}/5</span>
+
             <div className="card-buttons">
               <button className="btn" onClick={() => handleBuyNow(item)}>
                 Buy Now
@@ -167,6 +168,7 @@ const BuyerPage = () => {
                 Add to Cart
               </button>
             </div>
+
           </div>
         ))}
       </div>
@@ -175,6 +177,10 @@ const BuyerPage = () => {
         <Link to="/BuyerCart">Shopping Cart</Link>
       </button>
 
+      <button className="My-Order Button">
+        <Link to="/viewOrder"> My Order </Link>
+      </button>
+      
       {/* Confirm Checkout Popup */}
       {showCheckoutPopup && selectedProduct && (
         <div className="confirm-checkout-overlay">

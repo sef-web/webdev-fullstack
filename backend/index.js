@@ -70,7 +70,6 @@ app.get("/users", (req, res) => {
 });
 
 // Add to order purchase
-// Add to order purchase
 app.post("/orders", (req, res) => {
     const order = req.body; // Directly fetch the body as an object
     
@@ -125,6 +124,37 @@ app.post("/orders", (req, res) => {
     });
 });
 
+//get order purchases from a specific user
+app.get("/orders", (req, res) => {
+    const { buyer_id, seller_id } = req.query;
+
+    if (!buyer_id && !seller_id) {
+        return res.status(400).json({ message: "At least one ID (buyer or seller) is required." });
+    }
+
+    let query = `SELECT purchases.id, products.prod_name, buyer_id, purchases.seller_id, purchases.quantity, total_price, purchase_date, status
+                 FROM purchases
+                 JOIN products ON purchases.prod_id = products.id`;
+    const params = [];
+
+    if (buyer_id && seller_id) {
+        query += " WHERE purchases.buyer_id = ? AND purchases.seller_id = ?";
+        params.push(buyer_id, seller_id);
+    } else if (buyer_id) {
+        query += " WHERE purchases.buyer_id = ?";
+        params.push(buyer_id);
+    } else if (seller_id) {
+        query += " WHERE purchases.seller_id = ?";
+        params.push(seller_id);
+    }
+
+    db.query(query, params, (err, data) => {
+        if (err) return res.status(500).json({ error: err.message });
+        return res.status(200).json(data);
+    });
+});
+
+
 // Add to cart products 
 app.post("/addtocart", (req, res) => {
     const { prod_id, user_id, quantity } = req.body;
@@ -158,7 +188,6 @@ app.post("/addtocart", (req, res) => {
                     console.error("Error adding to cart:", err); // Log SQL error
                     return res.status(500).json({ message: "Server error while adding to cart." });
                 }
-                console.log("Product added to cart successfully");
                 return res.status(200).json({ message: "Product added to cart successfully." });
             });
         }
@@ -326,7 +355,7 @@ app.post("/Signup", (req, res) => {
 });
 // Add a product
 app.post("/products", (req, res) => {
-    const q = "INSERT INTO products (`prod_name`, `prod_description`, `image`, `price`, `quantity`, `cat_id`, `seller_id`) VALUES (?)"
+    const q = "INSERT INTO products (`prod_name`, `prod_description`, `image`, `price`, `quantity`, `cat_id`, `seller_id`) VALUES (?)";
     const values = [
         req.body.prod_name,
         req.body.prod_description,
@@ -337,11 +366,17 @@ app.post("/products", (req, res) => {
         req.body.seller_id
     ];
 
+    console.log("Inserting Product with Values:", values);
+
     db.query(q, [values], (err, data) => {
-        if (err) return res.json(err)
-        return res.json("Product successfully added")
+        if (err) {
+            console.error("Error inserting product:", err); // Log error to console
+            return res.status(500).json(err); // Return a 500 status with error message
+        }
+        return res.json("Product successfully added");
     });
 });
+
 
 // Delete a product
 app.delete("/products/:id", (req, res) => {

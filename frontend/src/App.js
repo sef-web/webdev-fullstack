@@ -16,6 +16,7 @@ import UpdateProduct from "./pages/UpdateProduct";
 //buyer
 import BuyerPage from "./pages/buyer_dashboard/BuyerPage";
 import BuyerCart from "./pages/buyer_dashboard/BuyerCart";
+import ViewOrder from "./pages/buyer_dashboard/viewOrder";
 
 //designs
 import "./style.css";
@@ -24,7 +25,8 @@ import "./signUp.css";
 import "./welcomePage.css";
 import "./productCard.css";
 import "./buyerCartStyles.css";
-import "./confirmOrder.css"
+import "./confirmOrder.css";
+import "./viewOrder.css";
 
 function App() {
   return (
@@ -45,6 +47,7 @@ function App() {
           {/* Buyer-Specific Routes */}
           <Route path="/buyerpage" element={<BuyerPage />} />
           <Route path="/buyercart" element={<BuyerCart />} />
+          <Route path="/vieworder" element={<ViewOrder/>} />
 
         </Routes>
       </BrowserRouter>

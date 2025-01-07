@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-const EditProduct = ({ product, onClose, onSave }) => {
+const EditProduct = ({ product, onClose, onSave, category }) => {
     const [editedProduct, setEditedProduct] = useState(product);
+    const [selectedCategory, setSelectedCategory] = useState(editedProduct.cat_id || "");
 
     const handleChange = (e) => {
         setEditedProduct((prev) => ({
@@ -11,7 +12,8 @@ const EditProduct = ({ product, onClose, onSave }) => {
     };
 
     const handleSave = () => {
-        onSave(editedProduct);
+        const updatedProduct = { ...editedProduct, cat_id: selectedCategory };
+        onSave(updatedProduct);
     };
 
     return (
@@ -21,10 +23,10 @@ const EditProduct = ({ product, onClose, onSave }) => {
                 <div className="form-container">
                     <div className="form-row">
                         <label htmlFor="prod_name">Product Name:</label>
-                        <input type="text"
+                        <input
+                            type="text"
                             id="prod_name"
                             name="prod_name"
-                            placeholder="Product Name"
                             value={editedProduct.prod_name}
                             onChange={handleChange}
                         />
@@ -36,46 +38,57 @@ const EditProduct = ({ product, onClose, onSave }) => {
                             type="text"
                             id="prod_description"
                             name="prod_description"
-                            placeholder="Product Description"
                             value={editedProduct.prod_description}
                             onChange={handleChange}
                         />
                     </div>
 
                     <div className="form-row">
-                        <label htmlFor="image">Product Image:</label>
+                        <label htmlFor="image">Image URL:</label>
                         <input
                             type="text"
                             id="image"
                             name="image"
-                            placeholder="Image URL"
                             value={editedProduct.image}
                             onChange={handleChange}
                         />
                     </div>
 
                     <div className="form-row">
-                        <label htmlFor="price">Product Price:</label>
+                        <label htmlFor="price">Price:</label>
                         <input
                             type="number"
                             id="price"
                             name="price"
-                            placeholder="Price"
                             value={editedProduct.price}
                             onChange={handleChange}
                         />
                     </div>
 
                     <div className="form-row">
-                        <label htmlFor="quantity">Product Quantity:</label>
+                        <label htmlFor="quantity">Quantity:</label>
                         <input
                             type="number"
                             id="quantity"
                             name="quantity"
-                            placeholder="Quantity"
                             value={editedProduct.quantity}
                             onChange={handleChange}
                         />
+                    </div>
+
+                    <div className="form-row">
+                        <label htmlFor="cat_id">Category:</label>
+                        <select
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            value={selectedCategory}
+                        >
+                            <option value="">Select a Category</option>
+                            {category.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.cat_name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
