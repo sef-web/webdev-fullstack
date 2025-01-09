@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 //import { useLocation } from "react-router-dom";
-//import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import UpdateProduct from './UpdateProduct';
 
 const SellerPage = () => {
@@ -13,6 +13,7 @@ const SellerPage = () => {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const seller_Id = user.user_id;
+    const user_name = user.name;
 
     useEffect(() => {
         const fetchAllProducts = async () => {
@@ -97,6 +98,7 @@ const SellerPage = () => {
     
     return (
         <div className='row'>
+            <h3>Good day! {user_name}</h3>
             <h1>Products</h1>
             <div className='column1'>
                 <table>
@@ -171,6 +173,10 @@ const SellerPage = () => {
                     category={category}
                 />
             )}
+
+            <button className="View-Order Button">
+                <Link to="/monitorOrder"> View Orders </Link>
+            </button>
         </div>
     );
 };

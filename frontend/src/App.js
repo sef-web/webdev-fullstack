@@ -12,6 +12,7 @@ import Login from "./pages/authentication/Login";
 //seller
 import SellerPage from "./pages/SellerPage";
 import UpdateProduct from "./pages/UpdateProduct";
+import MonitorOrder from "./pages/monitorOrder";
 
 //buyer
 import BuyerPage from "./pages/buyer_dashboard/BuyerPage";
@@ -42,7 +43,8 @@ function App() {
 
           {/* Seller side */}
           <Route path="/sellerpage" element={<SellerPage/>}/>
-          <Route path="/update/:id" element={<UpdateProduct />} />
+          <Route path="/update/:id" element={<UpdateProduct />}/>
+          <Route path="/monitororder" element={<MonitorOrder/>}/>
 
           {/* Buyer-Specific Routes */}
           <Route path="/buyerpage" element={<BuyerPage />} />

@@ -47,7 +47,7 @@ const BuyerPage = () => {
       }
     };
     userContacts();
-  }, []);
+  }, [buyer_Id]);
 
   // Fetch categories
   useEffect(() => {
@@ -141,7 +141,7 @@ const BuyerPage = () => {
         <select value={selectedSortBy} onChange={(e) => setSelectedSortBy(e.target.value)}>
           <option value="">Sort By</option>
           <option value="price">Price</option>
-          <option value="rating">Rating</option>
+          <option value="avg_rating">Rating</option>
         </select>
 
         <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}>
@@ -158,7 +158,9 @@ const BuyerPage = () => {
             <p>{item.prod_description}</p>
             <span className="stocks">stock: {item.quantity} <br /> </span> 
             <span className="price">${item.price}</span>
-            <span className="rating">Rating: {item.rating}/5</span>
+            <span className="rating">
+            Rating: {item.avg_rating.toFixed(1)} / 5 
+            ({item.total_reviews} reviews)</span>
 
             <div className="card-buttons">
               <button className="btn" onClick={() => handleBuyNow(item)}>

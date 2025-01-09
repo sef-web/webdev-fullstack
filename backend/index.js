@@ -22,31 +22,39 @@ app.get("/", (req, res) => {
 app.get("/products", (req, res) => {
     const { seller_id, cat_id, sort_by, order } = req.query;
 
-    // Start building the query
-    let query = "SELECT * FROM products";
+    // Base query: Get all products and join reviews to calculate average rating
+    let query = `
+        SELECT p.id, p.prod_name, p.prod_description, p.image, p.price, p.quantity, p.cat_id, p.seller_id,
+        COALESCE(AVG(r.rating), 0) AS avg_rating,
+        COUNT(r.id) AS total_reviews
+        FROM products p
+        LEFT JOIN reviews r ON p.id = r.prod_id`;
     const params = [];
 
-    // Filter by seller_id
+    // Add filters for seller and category
+    const conditions = [];
     if (seller_id) {
-        query += " WHERE seller_id = ?";
+        conditions.push("p.seller_id = ?");
         params.push(seller_id);
     }
-
-    // Filter by category (cat_id)
     if (cat_id) {
-        query += seller_id ? " AND cat_id = ?" : " WHERE cat_id = ?";
+        conditions.push("p.cat_id = ?");
         params.push(cat_id);
     }
+    if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(" AND ")}`;
+    }
+    // Group by product ID
+    query += ` GROUP BY p.id`;
 
-    // Add sorting options
+    // Add sorting logic
     if (sort_by) {
-        const validSortFields = ["price", "rating"];
+        const validSortFields = ["price", "avg_rating"];
         if (validSortFields.includes(sort_by)) {
             const sortOrder = order === "desc" ? "DESC" : "ASC"; // Default to ASC
             query += ` ORDER BY ${sort_by} ${sortOrder}`;
         }
     }
-
     // Execute the query
     db.query(query, params, (err, data) => {
         if (err) return res.status(500).json(err);
@@ -132,16 +140,14 @@ app.get("/orders", (req, res) => {
         return res.status(400).json({ message: "At least one ID (buyer or seller) is required." });
     }
 
-    let query = `SELECT purchases.id, products.prod_name, buyer_id, purchases.seller_id, purchases.quantity, total_price, purchase_date, status
+    let query = `SELECT purchases.id, purchases.prod_id, products.prod_name, purchases.buyer_id, users.name, purchases.seller_id, purchases.quantity, total_price, purchase_date, users.address, status
                  FROM purchases
-                 JOIN products ON purchases.prod_id = products.id`;
+                 JOIN products ON purchases.prod_id = products.id
+                 JOIN users ON purchases.buyer_id = users.id`;
     const params = [];
 
-    if (buyer_id && seller_id) {
-        query += " WHERE purchases.buyer_id = ? AND purchases.seller_id = ?";
-        params.push(buyer_id, seller_id);
-    } else if (buyer_id) {
-        query += " WHERE purchases.buyer_id = ?";
+    if (buyer_id) {
+        query += " WHERE purchases.buyer_id = ? AND (status = 'Pending' OR status = 'Shipped')";
         params.push(buyer_id);
     } else if (seller_id) {
         query += " WHERE purchases.seller_id = ?";
@@ -151,6 +157,75 @@ app.get("/orders", (req, res) => {
     db.query(query, params, (err, data) => {
         if (err) return res.status(500).json({ error: err.message });
         return res.status(200).json(data);
+    });
+});
+
+//add reviews for products
+app.post("/addreview", (req, res) => {
+    const { prod_id, buyer_id, rating, comment, purchase_id } = req.body;
+    console.log("prod_id:", prod_id);
+    console.log("buyer_id:", buyer_id);
+    console.log("rating:", rating);
+    console.log("comment:", comment);
+    console.log("purchase_id:", purchase_id);
+
+    if (!prod_id || !buyer_id || !rating || !purchase_id) {
+        return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const insertReviewQuery = `INSERT INTO reviews (prod_id, buyer_id, rating, comment) VALUES (?, ?, ?, ?)`;
+    const updatePurchaseQuery = `UPDATE purchases SET status = 'Completed' WHERE id = ?`;
+
+    db.query(insertReviewQuery, [prod_id, buyer_id, rating, comment], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        db.query(updatePurchaseQuery, [purchase_id], (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+            return res.status(200).json({ message: "Review added successfully and status updated to Completed." });
+        });
+    });
+});
+
+//see reviews for seller side
+app.get("/product-reviews", (req, res) => {
+    const { seller_id } = req.query;
+
+    if (!seller_id) {
+        return res.status(400).json({ message: "Seller ID is required." });
+    }
+
+    const query = `
+        SELECT reviews.id, reviews.rating, reviews.comment, reviews.created_at, products.prod_name, users.name AS buyer_name
+        FROM reviews
+        JOIN products ON reviews.prod_id = products.id
+        JOIN users ON reviews.buyer_id = users.id
+        WHERE products.seller_id = ?`;
+
+    db.query(query, [seller_id], (err, data) => {
+        if (err) return res.status(500).json({ error: err.message });
+        return res.status(200).json(data);
+    });
+});
+
+
+// Update order status
+app.put("/update-status", (req, res) => {
+    const { orderId, status } = req.body;
+
+    if (!orderId || !status) {
+        return res.status(400).json({ error: "Missing orderId or status" });
+    }
+
+    const query = "UPDATE purchases SET status = ? WHERE id = ?";
+    const params = [status, orderId];
+
+    db.query(query, params, (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: err.message });
+        }
+        return res.status(200).json({ message: "Order status updated successfully!" });
     });
 });
 

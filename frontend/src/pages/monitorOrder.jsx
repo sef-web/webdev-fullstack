@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ViewOrder = () => {
+    const navigate = useNavigate();
     const [purchases, setPurchases] = useState([]);
 
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState("");
-
     const user = JSON.parse(localStorage.getItem("user"));
-    const buyer_id = user.user_id;
+    const seller_id = user.user_id;
 
     useEffect(() => {
         const fetchAllPurchases = async () => {
             try {
                 const res = await axios.get("http://localhost:8800/orders", {
-                    params: { buyer_id },
+                    params: { seller_id },
                 });
                 setPurchases(res.data);
             } catch (err) {
@@ -23,27 +21,33 @@ const ViewOrder = () => {
             }
         };
         fetchAllPurchases();
-    }, [buyer_id]);
+    }, [seller_id]);
 
-    const handleAddReview = async () => {
+    // Handle status update
+    const handleStatusChange = async (orderId, newStatus) => {
         try {
-            const res = await axios.post("http://localhost:8800/addreview", {
-                prod_id: selectedOrder.prod_id,
-                buyer_id: selectedOrder.buyer_id,
-                rating: rating,
-                comment: comment,
-                purchase_id: selectedOrder.id,
+            await axios.put("http://localhost:8800/update-status", {
+                orderId,
+                status: newStatus,
             });
-            window.location.reload();
-            alert(res.data.message);
-            setSelectedOrder(null); // Close modal
+            alert("Status updated successfully!");
+            setPurchases((prevPurchases) =>
+                prevPurchases.map((order) =>
+                    order.id === orderId ? { ...order, status: newStatus } : order
+                )
+            );
         } catch (err) {
-            console.error(err);
+            console.log(err);
+            alert("Failed to update status.");
         }
     };
+    
 
     return (
         <div className="buyer-cart-container">
+            <button className="go-back-button" onClick={() => navigate(-1)}>
+                ←
+            </button>
             <h1>Order List</h1>
             <table className="purchases-details">
                 <thead>
@@ -52,7 +56,10 @@ const ViewOrder = () => {
                         <th>Quantity</th>
                         <th>Total Price</th>
                         <th>Purchase Date</th>
+                        <th>Buyer Name</th>
+                        <th>Address</th>
                         <th>Status</th>
+                        <th>Edit Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -70,35 +77,25 @@ const ViewOrder = () => {
                                     minute: "2-digit",
                                 })}
                             </td>
+                            <td>{order.name}</td>
+                            <td>{order.address}</td>
                             <td>{order.status}</td>
-                            <div>
-                                {order.status === "Shipped" && (
-                                    <button onClick={() => setSelectedOrder(order)}>Add Review</button>
-                                )}
-                            </div>
-                
+                            <td>
+                                <select
+                                    onChange={(e) =>
+                                        handleStatusChange(order.id, e.target.value)
+                                    }
+                                    value={order.status} // Show the current status in the dropdown
+                                >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {selectedOrder && (
-                <div className="modal">
-                    <h2>Add Review on {selectedOrder.prod_name}</h2>
-                    <label>Rating (1-5):</label>
-                    <input
-                        type="number"
-                        value={rating}
-                        onChange={(e) => setRating(e.target.value)}
-                        min="1"
-                        max="5"
-                    />
-                    <label>Comment:</label>
-                    <textarea value={comment} onChange={(e) => setComment(e.target.value)} />
-                    <button onClick={handleAddReview}>Submit</button>
-                    <button onClick={() => setSelectedOrder(null)}>Cancel</button>
-                </div>
-            )}
-
         </div>
     );
 };
