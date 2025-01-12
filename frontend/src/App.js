@@ -20,6 +20,7 @@ import IncomeDetails from "./pages/IncomeDetails";
 import BuyerPage from "./pages/buyer_dashboard/BuyerPage";
 import BuyerCart from "./pages/buyer_dashboard/BuyerCart";
 import ViewOrder from "./pages/buyer_dashboard/viewOrder";
+import OrderHistory from "./pages/buyer_dashboard/OrderHistory";
 
 //designs
 import "./style.css";
@@ -32,6 +33,8 @@ import "./confirmOrder.css";
 import "./viewOrder.css";
 import "./IncomeDetails.css";
 import "./SellerNotif.css";
+import "./OrderHistory.css";
+import "./BuyerNotif.css";
 
 function App() {
   return (
@@ -56,6 +59,7 @@ function App() {
           <Route path="/buyerpage" element={<BuyerPage />} />
           <Route path="/buyercart" element={<BuyerCart />} />
           <Route path="/vieworder" element={<ViewOrder/>} />
+          <Route path="/orderhistory" element={<OrderHistory/>}/>
 
         </Routes>
       </BrowserRouter>

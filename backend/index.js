@@ -24,11 +24,9 @@ app.get("/products", (req, res) => {
   
     let query = `SELECT p.id, p.prod_name, p.prod_description, p.image, p.price, p.quantity, p.cat_id, p.seller_id,
         COALESCE(AVG(r.rating), 0) AS avg_rating,
-        COUNT(r.id) AS total_reviews,
-        COALESCE(SUM(ps.quantity), 0) AS total_sold
+        COUNT(r.id) AS total_reviews
         FROM products p
-        LEFT JOIN reviews r ON p.id = r.prod_id
-        LEFT JOIN purchases ps ON p.id = ps.prod_id AND ps.status = 'Completed'`;
+        LEFT JOIN reviews r ON p.id = r.prod_id`;
   
     const params = [];
     const conditions = [];
@@ -48,7 +46,7 @@ app.get("/products", (req, res) => {
     query += ` GROUP BY p.id`;
   
     if (sort_by) {
-      const validSortFields = ["price", "avg_rating", "total_sold"];
+      const validSortFields = ["price", "avg_rating"];
       if (validSortFields.includes(sort_by)) {
         const sortOrder = order === "desc" ? "DESC" : "ASC";
         query += ` ORDER BY ${sort_by} ${sortOrder}`;
@@ -60,7 +58,28 @@ app.get("/products", (req, res) => {
       return res.status(200).json(data);
     });
   });
-  
+
+  app.get("/notifications", async (req, res) => {
+    const { buyer_id } = req.query;
+
+    if (!buyer_id) {
+        return res.status(400).json({ message: "buyer ID is required." });
+    }
+
+    let query = `SELECT purchases.id, purchases.prod_id, products.prod_name, products.prod_description, status
+                 FROM purchases
+                 JOIN products ON purchases.prod_id = products.id
+                 JOIN users ON purchases.buyer_id = users.id
+                 WHERE purchases.buyer_id = ? AND status = 'Shipped'`;
+
+
+    db.query(query, [buyer_id], (err, data) => {
+        if (err) return res.status(500).json({ error: err.message });
+        return res.status(200).json(data);
+    });
+});
+
+
 
 // Fetch user contacts
 app.get("/users", (req, res) => {
@@ -159,6 +178,46 @@ app.get("/orders", (req, res) => {
         return res.status(200).json(data);
     });
 });
+
+// purchase history for completed status
+app.get("/orderhistory", (req, res) => {
+    const { buyer_id } = req.query;
+
+    if (!buyer_id) {
+        return res.status(400).json({ message: "Buyer ID is required." });
+    }
+
+    let query = `SELECT purchases.id, purchases.prod_id, products.prod_name, products.image, purchases.buyer_id, 
+                seller.username AS seller_name, purchases.quantity, products.price, purchases.total_price, purchases.purchase_date, purchases.status
+                FROM purchases
+                JOIN products ON purchases.prod_id = products.id
+                JOIN users AS seller ON purchases.seller_id = seller.id`;
+    const params = [];
+
+    if (buyer_id) {
+        query += " WHERE purchases.buyer_id = ? AND status = 'Completed'";
+        params.push(buyer_id);
+    }
+
+    db.query(query, params, (err, data) => {
+        if (err) return res.status(500).json({ error: err.message });
+        return res.status(200).json(data);
+    });
+});
+
+// total sold per item
+app.get("/totalsold", (req, res) => {
+    const query = `SELECT prod_id, SUM(quantity) AS total_sold 
+                FROM purchases 
+                WHERE status = 'Completed' 
+                GROUP BY prod_id;`;
+
+    db.query(query, (err, data) => {
+        if (err) return res.status(500).json({ error: err.message });
+        return res.status(200).json(data);
+    });
+});
+
 
 //add reviews for products
 app.post("/addreview", (req, res) => {

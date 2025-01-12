@@ -14,6 +14,11 @@ const BuyerPage = () => {
   const [userContact, setUserContact] = useState([]);
   const [buyerDetails, setBuyerDetails] = useState([]);
 
+  const [notifications, setNotifications] = useState([]); // Notifications
+  const [isNotifVisible, setIsNotifVisible] = useState(false); // Toggle Notification Visibility
+
+  const [totalSold, setTotalSold] = useState([]);
+
   const user = JSON.parse(localStorage.getItem("user"));
   const buyer_Id = user.user_id;
 
@@ -123,9 +128,67 @@ const BuyerPage = () => {
     setSelectedProduct(null);
   };
 
+    // Fetch notifications
+    useEffect(() => {
+      const fetchNotifications = async () => {
+        try {
+          const res = await axios.get(`http://localhost:8800/notifications`, {
+            params: { buyer_id: buyer_Id },
+          });
+          setNotifications(res.data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchNotifications();
+    }, [buyer_Id]);
+    
+    //fetch total sold per item
+    useEffect(() => {
+      const soldItems = async () => {
+        try {
+          const res = await axios.get("http://localhost:8800/totalsold");
+          setTotalSold(res.data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      soldItems();
+    }, []);
+
   return (
     <div className="buyer-container">
       <h1 className="page-title">Marketplace</h1>
+
+      {/* Notification Button */}
+      <div className="notifications">
+        <button
+          className="notif-button"
+          onClick={() => setIsNotifVisible(!isNotifVisible)}
+        >
+          Notifications ({notifications.length})
+        </button>
+
+        {isNotifVisible && (
+          <div className="notif-list">
+            {notifications.length > 0 ? (
+              notifications.map((notif) => (
+                <div key={notif.prod_id} className="notif-item">
+                  <h4>Your order is {notif.status}</h4>
+                  <p>
+                    Order of <strong>{notif.prod_name} ({notif.prod_description})</strong> product is
+                    shipped. Your feedback matters to others! Please rate the
+                    product to complete your purchase.
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="no-notifications">No notifications.</p>
+            )}
+          </div>
+        )}
+
+      </div>
 
       {/* Filters and Sorting */}
       <div className="filter-sort-container">
@@ -158,10 +221,12 @@ const BuyerPage = () => {
             <p>{item.prod_description}</p>
             <span className="stocks">stock: {item.quantity} <br /> </span> 
             <span className="price">${item.price}</span>
-            <span className="rating"> 
-              <span className="Star"> &#9733; </span> 
-              {item.avg_rating.toFixed(1)} / 5 |  {item.total_sold} Sold </span>
-
+            <span className="rating">
+              <span className="Star"> &#9733; </span>
+              {item.avg_rating.toFixed(1)} / 5 |{" "}
+              {totalSold.find((sold) => sold.prod_id === item.id)?.total_sold || 0} Sold
+            </span>
+            
             <div className="card-buttons">
               <button className="btn" onClick={() => handleBuyNow(item)}>
                 Buy Now
@@ -182,6 +247,11 @@ const BuyerPage = () => {
       <button className="My-Order Button">
         <Link to="/viewOrder"> My Order </Link>
       </button>
+
+      <button className="My-Order-History Button">
+        <Link to="/orderhistory"> Purchase History </Link>
+      </button>
+
       
       {/* Confirm Checkout Popup */}
       {showCheckoutPopup && selectedProduct && (

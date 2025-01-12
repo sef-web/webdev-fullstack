@@ -119,28 +119,29 @@ const SellerPage = () => {
 
             {/* Notification Section */}
             <div className="notification-container">
-                <button className="notification-button" onClick={toggleNotifications}>
-                    Notifications ({lowStockAlerts.length})
-                </button>
-                {showNotifications && (
-                    <div className="notification-popup">
+            <button className="notification-button" onClick={toggleNotifications}>
+                Notifications ({lowStockAlerts.length})
+            </button>
+            {showNotifications && (
+                <div className="notification-popup">
+                {lowStockAlerts.length > 0 ? (
+                    lowStockAlerts.map((alert, index) => (
+                    <div key={index} className="notification-item">
                         <h4>Low Stock Alert!</h4>
-                        {lowStockAlerts.length > 0 ? (
-                            <ul>
-                                {lowStockAlerts.map((alert, index) => (
-                                    <li key={index}>
-                                        <strong>{alert.name}</strong><br />
-                                        Current Stock: {alert.currentStock}<br />
-                                        Recommended Reorder: {alert.recommendedReorder}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No notifications.</p>
-                        )}
+                        <p>
+                        <strong>{alert.name}</strong> is running low on stock.<br />
+                        Current Stock: {alert.currentStock}<br />
+                        Recommended Reorder: {alert.recommendedReorder}
+                        </p>
                     </div>
+                    ))
+                ) : (
+                    <p className="no-notifications">No notifications.</p>
                 )}
+                </div>
+            )}
             </div>
+
 
             <div className='column1'>
                 <table>

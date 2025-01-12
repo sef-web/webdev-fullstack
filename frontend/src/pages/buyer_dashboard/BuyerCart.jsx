@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 
 
 const BuyerCart = () => {
@@ -8,7 +7,6 @@ const BuyerCart = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const user = JSON.parse(localStorage.getItem("user"));
     const buyer_id = user.user_id;
-    const navigate = useNavigate();
 
     // use to fetch data from cart table 
     //passing buyer_id as a parameter
@@ -97,9 +95,6 @@ const BuyerCart = () => {
 
     return (
         <div className="buyer-cart-container">
-            <button className="go-back-button" onClick={() => navigate(-1)}>
-                ←
-            </button>
 
             <h1>Your Cart</h1>
             <div className="buyer-cart-items">
