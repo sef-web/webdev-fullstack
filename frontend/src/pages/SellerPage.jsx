@@ -11,6 +11,9 @@ const SellerPage = () => {
 
     const [editProduct, setEditProduct] = useState(null); 
 
+    const [lowStockAlerts, setLowStockAlerts] = useState([]); // Low-stock notifications
+    const [showNotifications, setShowNotifications] = useState(false); // Toggle notification list
+
     const user = JSON.parse(localStorage.getItem('user'));
     const seller_Id = user.user_id;
     const user_name = user.name;
@@ -23,12 +26,25 @@ const SellerPage = () => {
 
                 const catRes = await axios.get("http://localhost:8800/category");
                 setCategory(catRes.data);
+
+                // Calculate low stock alerts
+                const lowStock = res.data.filter(product => product.quantity < 10); // Threshold: 10
+                const alerts = lowStock.map(product => ({
+                    name: product.prod_name,
+                    currentStock: product.quantity,
+                    recommendedReorder: Math.max(10, 2 * product.quantity),
+                }));
+                setLowStockAlerts(alerts);
             } catch (err) {
                 console.log(err);
             }
         };
         fetchAllProducts();
     }, [seller_Id]);  
+
+    const toggleNotifications = () => {
+        setShowNotifications(!showNotifications);
+    };
 
     const handleEditClick = (product) => {
         setEditProduct(product); 
@@ -100,6 +116,32 @@ const SellerPage = () => {
         <div className='row'>
             <h3>Good day! {user_name}</h3>
             <h1>Products</h1>
+
+            {/* Notification Section */}
+            <div className="notification-container">
+                <button className="notification-button" onClick={toggleNotifications}>
+                    Notifications ({lowStockAlerts.length})
+                </button>
+                {showNotifications && (
+                    <div className="notification-popup">
+                        <h4>Low Stock Alert!</h4>
+                        {lowStockAlerts.length > 0 ? (
+                            <ul>
+                                {lowStockAlerts.map((alert, index) => (
+                                    <li key={index}>
+                                        <strong>{alert.name}</strong><br />
+                                        Current Stock: {alert.currentStock}<br />
+                                        Recommended Reorder: {alert.recommendedReorder}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No notifications.</p>
+                        )}
+                    </div>
+                )}
+            </div>
+
             <div className='column1'>
                 <table>
                     <thead>
@@ -176,6 +218,14 @@ const SellerPage = () => {
 
             <button className="View-Order Button">
                 <Link to="/monitorOrder"> View Orders </Link>
+            </button>
+
+            <button className="View-Review-Details Button">
+                <Link to="/reviewdetails"> Review Details </Link>
+            </button>
+
+            <button className="View-Income-Details Button">
+                <Link to="/incomedetails"> Income Details </Link>
             </button>
         </div>
     );

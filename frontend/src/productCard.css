@@ -152,3 +152,8 @@ button:hover {
   margin-bottom: 10px;
   display: block;
 }
+
+.Star{
+  font-size: 19px;
+  color: #FFC000;
+}

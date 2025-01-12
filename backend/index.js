@@ -21,46 +21,46 @@ app.get("/", (req, res) => {
 // Fetch all products with seller-based filtering, category, and sorting options
 app.get("/products", (req, res) => {
     const { seller_id, cat_id, sort_by, order } = req.query;
-
-    // Base query: Get all products and join reviews to calculate average rating
-    let query = `
-        SELECT p.id, p.prod_name, p.prod_description, p.image, p.price, p.quantity, p.cat_id, p.seller_id,
+  
+    let query = `SELECT p.id, p.prod_name, p.prod_description, p.image, p.price, p.quantity, p.cat_id, p.seller_id,
         COALESCE(AVG(r.rating), 0) AS avg_rating,
-        COUNT(r.id) AS total_reviews
+        COUNT(r.id) AS total_reviews,
+        COALESCE(SUM(ps.quantity), 0) AS total_sold
         FROM products p
-        LEFT JOIN reviews r ON p.id = r.prod_id`;
+        LEFT JOIN reviews r ON p.id = r.prod_id
+        LEFT JOIN purchases ps ON p.id = ps.prod_id AND ps.status = 'Completed'`;
+  
     const params = [];
-
-    // Add filters for seller and category
     const conditions = [];
+    
     if (seller_id) {
-        conditions.push("p.seller_id = ?");
-        params.push(seller_id);
+      conditions.push("p.seller_id = ?");
+      params.push(seller_id);
     }
     if (cat_id) {
-        conditions.push("p.cat_id = ?");
-        params.push(cat_id);
+      conditions.push("p.cat_id = ?");
+      params.push(cat_id);
     }
     if (conditions.length > 0) {
-        query += ` WHERE ${conditions.join(" AND ")}`;
+      query += ` WHERE ${conditions.join(" AND ")}`;
     }
-    // Group by product ID
+  
     query += ` GROUP BY p.id`;
-
-    // Add sorting logic
+  
     if (sort_by) {
-        const validSortFields = ["price", "avg_rating"];
-        if (validSortFields.includes(sort_by)) {
-            const sortOrder = order === "desc" ? "DESC" : "ASC"; // Default to ASC
-            query += ` ORDER BY ${sort_by} ${sortOrder}`;
-        }
+      const validSortFields = ["price", "avg_rating", "total_sold"];
+      if (validSortFields.includes(sort_by)) {
+        const sortOrder = order === "desc" ? "DESC" : "ASC";
+        query += ` ORDER BY ${sort_by} ${sortOrder}`;
+      }
     }
-    // Execute the query
+  
     db.query(query, params, (err, data) => {
-        if (err) return res.status(500).json(err);
-        return res.status(200).json(data);
+      if (err) return res.status(500).json(err);
+      return res.status(200).json(data);
     });
-});
+  });
+  
 
 // Fetch user contacts
 app.get("/users", (req, res) => {
@@ -163,11 +163,6 @@ app.get("/orders", (req, res) => {
 //add reviews for products
 app.post("/addreview", (req, res) => {
     const { prod_id, buyer_id, rating, comment, purchase_id } = req.body;
-    console.log("prod_id:", prod_id);
-    console.log("buyer_id:", buyer_id);
-    console.log("rating:", rating);
-    console.log("comment:", comment);
-    console.log("purchase_id:", purchase_id);
 
     if (!prod_id || !buyer_id || !rating || !purchase_id) {
         return res.status(400).json({ message: "All fields are required." });
@@ -188,7 +183,7 @@ app.post("/addreview", (req, res) => {
 });
 
 //see reviews for seller side
-app.get("/product-reviews", (req, res) => {
+app.get("/reviewdetails", (req, res) => {
     const { seller_id } = req.query;
 
     if (!seller_id) {
@@ -208,7 +203,43 @@ app.get("/product-reviews", (req, res) => {
     });
 });
 
-
+// Fetch income details with an overview 
+app.get("/incomedetails", (req, res) => { 
+    const { seller_id } = req.query; 
+    if (!seller_id) {
+     return res.status(400).json({ message: "Seller ID is required." }); 
+    } 
+    const overviewQuery = ` SELECT SUM(CASE WHEN ps.status = 'Pending' THEN ps.total_price ELSE 0 END) AS pending_total, 
+                            SUM(CASE WHEN ps.status = 'Completed' THEN ps.total_price ELSE 0 END) AS released_total, 
+                            SUM(CASE WHEN ps.status = 'Pending' AND WEEK(ps.purchase_date) = WEEK(CURDATE()) 
+                            THEN ps.total_price ELSE 0 END) AS pending_week, 
+                            SUM(CASE WHEN ps.status = 'Completed' AND WEEK(ps.purchase_date) = WEEK(CURDATE()) 
+                            THEN ps.total_price ELSE 0 END) AS released_week, 
+                            SUM(CASE WHEN ps.status = 'Pending' AND MONTH(ps.purchase_date) = MONTH(CURDATE()) 
+                            THEN ps.total_price ELSE 0 END) AS pending_month, 
+                            SUM(CASE WHEN ps.status = 'Completed' AND MONTH(ps.purchase_date) = MONTH(CURDATE()) 
+                            THEN ps.total_price ELSE 0 END) AS released_month 
+                            FROM purchases ps 
+                            WHERE ps.seller_id = ?`; 
+    
+    const detailsQuery = ` SELECT u.name AS buyer_name, p.prod_name, ps.total_price AS release_amount 
+                            FROM purchases ps 
+                            JOIN users u ON ps.buyer_id = u.id 
+                            JOIN products p ON ps.prod_id = p.id 
+                            WHERE ps.seller_id = ? AND ps.status = 'Completed'`; 
+    
+    const params = [seller_id]; 
+    
+    db.query(overviewQuery, params, (err, overviewData) => { 
+        if (err) return res.status(500).json({ error: err.message }); 
+        
+        db.query(detailsQuery, params, (err, detailsData) => { 
+            if (err) return res.status(500).json({ error: err.message }); 
+            return res.status(200).json({ overview: overviewData[0], details: detailsData }); 
+        }); 
+    }); 
+});
+    
 // Update order status
 app.put("/update-status", (req, res) => {
     const { orderId, status } = req.body;

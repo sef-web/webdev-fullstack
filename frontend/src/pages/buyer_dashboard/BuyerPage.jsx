@@ -158,9 +158,9 @@ const BuyerPage = () => {
             <p>{item.prod_description}</p>
             <span className="stocks">stock: {item.quantity} <br /> </span> 
             <span className="price">${item.price}</span>
-            <span className="rating">
-            Rating: {item.avg_rating.toFixed(1)} / 5 
-            ({item.total_reviews} reviews)</span>
+            <span className="rating"> 
+              <span className="Star"> &#9733; </span> 
+              {item.avg_rating.toFixed(1)} / 5 |  {item.total_sold} Sold </span>
 
             <div className="card-buttons">
               <button className="btn" onClick={() => handleBuyNow(item)}>

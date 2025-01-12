@@ -13,6 +13,8 @@ import Login from "./pages/authentication/Login";
 import SellerPage from "./pages/SellerPage";
 import UpdateProduct from "./pages/UpdateProduct";
 import MonitorOrder from "./pages/monitorOrder";
+import ReviewDetails from "./pages/ReviewDetails";
+import IncomeDetails from "./pages/IncomeDetails";
 
 //buyer
 import BuyerPage from "./pages/buyer_dashboard/BuyerPage";
@@ -28,6 +30,8 @@ import "./productCard.css";
 import "./buyerCartStyles.css";
 import "./confirmOrder.css";
 import "./viewOrder.css";
+import "./IncomeDetails.css";
+import "./SellerNotif.css";
 
 function App() {
   return (
@@ -45,6 +49,8 @@ function App() {
           <Route path="/sellerpage" element={<SellerPage/>}/>
           <Route path="/update/:id" element={<UpdateProduct />}/>
           <Route path="/monitororder" element={<MonitorOrder/>}/>
+          <Route path="/reviewdetails" element={<ReviewDetails/>}/>
+          <Route path="/incomedetails" element={<IncomeDetails/>}/>
 
           {/* Buyer-Specific Routes */}
           <Route path="/buyerpage" element={<BuyerPage />} />
