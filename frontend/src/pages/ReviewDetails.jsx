@@ -22,27 +22,36 @@ const ViewOrder = () => {
     }, [seller_id]);
 
     return (
-        <div className="Review-Details">
-            <h3>Shop Ratings</h3>
-            <div className="see-review-details">
-                    {reviews.map((review) => (
-                        <div key={review.id}>
-                            <span>{new Date(review.created_at).toLocaleString("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                })}
-                            </span>
-    
-                            <span>{review.buyer_name}</span>
-                            <span>{review.prod_name}</span>
-                            <span>Rating: </span><span className="Star"> &#9733; </span> <span>{review.rating}</span>
-                            <span>Comment: {review.comment}</span>
-                        </div>
-                    ))}
-            </div>
+        <div>
+            {reviews.length > 0 ? (
+                <div className="Review-Details">
+
+                    <h4>Shop Ratings</h4>
+                    
+                    <div className="see-review-details">
+                        {reviews.map((review) => (
+                            <div key={review.id} className="review-card">
+                                <div className="review-header">
+                                    <span className="review-date">{new Date(review.created_at).toLocaleString("en-US", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })}</span>
+                                    <span className="review-buyer">{review.buyer_name}</span>
+                                </div>
+                                <div className="review-body">
+                                    <span className="review-product">{review.prod_name}</span>
+                                    <span className="review-rating">Rating: <span className="Star">&#9733;</span> {review.rating}</span>
+                                    <span className="review-comment">Comment: {review.comment}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ) : ( <div className="No-reviews-yet"><p>No reviews yet</p></div>)}
+
         </div>
     );
 };

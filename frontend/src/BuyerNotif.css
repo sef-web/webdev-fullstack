@@ -1,10 +1,10 @@
-.notifications {
+.notification {
     position: relative;
     margin: 20px;
     display: inline-block;
 }
 
-.notif-button {
+.notification-button {
     padding: 10px 15px;
     background-color: #333333;
     color: #fff;
@@ -13,6 +13,9 @@
     cursor: pointer;
 }
 
+.notification-button{
+    font-size: 12px;
+}
 .notif-list {
     position: absolute;
     top: 100%;

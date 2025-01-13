@@ -4,15 +4,16 @@
     display: inline-block;
   }
   
+
   .notification-button {
-    padding: 10px 15px;
-    background-color: #333333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
+    
     cursor: pointer;
-  }
-  
+}
+
+  .notification-button img {
+    width: 30px;
+    height: auto;
+}
   .notification-popup {
     position: absolute;
     top: 100%;

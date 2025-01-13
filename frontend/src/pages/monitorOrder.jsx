@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const ViewOrder = () => {
-    const navigate = useNavigate();
     const [purchases, setPurchases] = useState([]);
 
     const user = JSON.parse(localStorage.getItem("user"));
@@ -44,12 +42,9 @@ const ViewOrder = () => {
     
 
     return (
-        <div className="buyer-cart-container">
-            <button className="go-back-button" onClick={() => navigate(-1)}>
-                ←
-            </button>
-            <h1>Order List</h1>
-            <table className="purchases-details">
+        <div className="monitor-order-container">
+            <h4>Order List</h4>
+            <table className="column2-table">
                 <thead>
                     <tr>
                         <th>Product Name</th>

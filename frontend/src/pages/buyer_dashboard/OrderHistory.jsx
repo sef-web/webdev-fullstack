@@ -23,7 +23,7 @@ const ViewOrder = () => {
 
     return (
         <div className="buyer-history-container">
-            <h3 className="history-title">Purchase History</h3>
+            <h4 className="history-title">Purchase History</h4>
             <div className="purchases-history">
                 {orderHistory.map((history) => (
                     <div key={history.id} className="order-card">

@@ -96,7 +96,7 @@ const BuyerCart = () => {
     return (
         <div className="buyer-cart-container">
 
-            <h1>Your Cart</h1>
+            <h3>Your Cart</h3>
             <div className="buyer-cart-items">
                 {cartItems.map((item) => (
                     <div key={item.cart_id} className="cart-item">

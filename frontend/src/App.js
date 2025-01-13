@@ -23,18 +23,27 @@ import ViewOrder from "./pages/buyer_dashboard/viewOrder";
 import OrderHistory from "./pages/buyer_dashboard/OrderHistory";
 
 //designs
-import "./style.css";
+//user authentication
+import "./welcomePage.css";
 import "./LoginDes.css";
 import "./signUp.css";
-import "./welcomePage.css";
+
+//seller page including header & footer
+import "./style.css";
+import "./MonitorOrder.css";
+import "./ReviewDetails.css";
+import "./SellerNotif.css";
+import "./IncomeDetails.css";
+
+//buyer page (productcard is the main design)
 import "./productCard.css";
 import "./buyerCartStyles.css";
 import "./confirmOrder.css";
 import "./viewOrder.css";
-import "./IncomeDetails.css";
-import "./SellerNotif.css";
 import "./OrderHistory.css";
 import "./BuyerNotif.css";
+
+import "./logout-btn.css";
 
 function App() {
   return (

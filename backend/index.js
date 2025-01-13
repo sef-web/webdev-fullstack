@@ -57,7 +57,7 @@ app.get("/products", (req, res) => {
       if (err) return res.status(500).json(err);
       return res.status(200).json(data);
     });
-  });
+});
 
   app.get("/notifications", async (req, res) => {
     const { buyer_id } = req.query;
@@ -530,8 +530,6 @@ app.post("/products", (req, res) => {
         req.body.cat_id,
         req.body.seller_id
     ];
-
-    console.log("Inserting Product with Values:", values);
 
     db.query(q, [values], (err, data) => {
         if (err) {

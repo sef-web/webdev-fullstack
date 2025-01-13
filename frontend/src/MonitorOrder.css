@@ -1,0 +1,42 @@
+.monitor-order-container{
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    width: 95%;
+}
+
+.column2-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.column2-table th,
+.column2-table td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.column2-table th {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+
+.column2-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.column2-table select {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}

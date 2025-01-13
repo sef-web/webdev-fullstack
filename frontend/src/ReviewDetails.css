@@ -1,0 +1,72 @@
+.Review-Details {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+
+.see-review-details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.review-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 16px;
+    color: #444;
+}
+
+.review-product {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.Star {
+    color: gold;
+    margin-right: 5px;
+    font-size: 1.2rem;
+}
+
+.review-comment {
+    font-style: italic;
+    color: #555;
+}
+
+.No-reviews-yet{
+    font-size: 16px; /* Adjust font size */
+    color: #333;
+    text-align: center; /* Center-align the text */
+    background-color: transparent; /* Ensure no conflicting background color */
+    padding: 10px; /* Add some padding for spacing */
+    margin-top: 10%;
+    font-weight: bold; /* Make the text bold */
+}

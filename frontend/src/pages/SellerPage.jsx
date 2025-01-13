@@ -14,6 +14,9 @@ const SellerPage = () => {
     const [lowStockAlerts, setLowStockAlerts] = useState([]); // Low-stock notifications
     const [showNotifications, setShowNotifications] = useState(false); // Toggle notification list
 
+    const [showProfilePopup, setShowProfilePopup] = useState(false);
+    const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
     const user = JSON.parse(localStorage.getItem('user'));
     const seller_Id = user.user_id;
     const user_name = user.name;
@@ -111,124 +114,174 @@ const SellerPage = () => {
         });
         setSelectedCategory('');
     };
+    const toggleProfilePopup = () => {
+        setShowProfilePopup(!showProfilePopup);
+    };
     
+    const toggleLogoutPopup = () => {
+        setShowLogoutPopup(!showLogoutPopup);
+        setShowProfilePopup(false); // Close profile popup when opening logout confirmation
+    };
+    
+    const handleLogout = () => {
+        console.log("User logged out");
+        window.location.href = "/login";
+    };
+
     return (
+        
         <div className='row'>
-            <h3>Good day! {user_name}</h3>
-            <h1>Products</h1>
-
-            {/* Notification Section */}
-            <div className="notification-container">
-            <button className="notification-button" onClick={toggleNotifications}>
-                Notifications ({lowStockAlerts.length})
-            </button>
-            {showNotifications && (
-                <div className="notification-popup">
-                {lowStockAlerts.length > 0 ? (
-                    lowStockAlerts.map((alert, index) => (
-                    <div key={index} className="notification-item">
-                        <h4>Low Stock Alert!</h4>
-                        <p>
-                        <strong>{alert.name}</strong> is running low on stock.<br />
-                        Current Stock: {alert.currentStock}<br />
-                        Recommended Reorder: {alert.recommendedReorder}
-                        </p>
-                    </div>
-                    ))
-                ) : (
-                    <p className="no-notifications">No notifications.</p>
-                )}
+            <nav className="navbar">
+                <div className="navbar-left">
+                    <a className="navbar-title">Shop Products</a>
                 </div>
-            )}
-            </div>
+                <div className="navbar-right">
+                    {/* Notification Section */}
+                    <div className="notification-container">
+                        <button className="notification-button" onClick={toggleNotifications}>
+                        <img src="/images/notification.png" alt="Notification Icon" />
+                        <span>({lowStockAlerts.length})</span>
+                        </button>
+
+                        {showNotifications && (
+                            <div className="notification-popup">
+                            {lowStockAlerts.length > 0 ? (
+                                lowStockAlerts.map((alert, index) => (
+                                <div key={index} className="notification-item">
+                                    <h4>Low Stock Alert!</h4>
+                                    <p>
+                                    <strong>{alert.name}</strong> is running low on stock.<br />
+                                    Current Stock: {alert.currentStock}<br />
+                                    Recommended Reorder: {alert.recommendedReorder}
+                                    </p>
+                                </div>
+                                ))
+                            ) : (
+                                <p className="no-notifications">No notifications.</p>
+                            )}
+                            </div>
+                            )}
+                    </div>
+
+                {/* Profile Section */}
+                <div className="profile">
+                    <button className="profile-button" onClick={toggleProfilePopup}>
+                        <img src="/images/profile-user.png" alt="profile-pic" />
+                        <h3 className="profile-name">{user_name}</h3>
+                    </button>
+
+                    {showProfilePopup && (
+                        <div className="profile-popup">
+                            <button className="logout-option" onClick={toggleLogoutPopup}>
+                                Logout
+                            </button>
+                        </div>
+                    )}
+
+                    {showLogoutPopup && (
+                        <div className="logout-popup">
+                            <p>Are you sure you want to logout?</p>
+                            <button className="confirm-logout" onClick={handleLogout}>Confirm</button>
+                            <button className="cancel-logout" onClick={toggleLogoutPopup}>Cancel</button>
+                        </div>
+                    )}
+                </div>
+                </div>
+            </nav>
 
 
-            <div className='column1'>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Add Product</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="text" placeholder='Product Name' onChange={handleChange} name="prod_name" value={product.prod_name}/>
-                                <input type="text" placeholder='Product Description' onChange={handleChange} name="prod_description" value={product.prod_description}/>
-                                <input type="text" placeholder='Image URL' onChange={handleChange} name="image" value={product.image}/>
-                                <input type="number" placeholder='Price' onChange={handleChange} name="price" value={product.price}/>
-                                <div>
-                                    <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}> 
-                                        <option value="">Select a Category</option> 
-                                        {category.map(cat => (
-                                            <option key={cat.id} value={cat.id}> 
-                                                {cat.cat_name} 
-                                            </option> 
-                                        ))} 
-                                    </select>
-                                </div> 
-                                <input type="number" placeholder='Quantity' onChange={handleChange} name="quantity" value={product.quantity}/>
-                                <button onClick={handleClick}>Submit</button>
-                                <button onClick={handleClear}>Clear</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div className='row-container'>
+
+                <div className='tab-container'>
+                    <nav>
+                        <ul className='tab-list'>
+                            <li className='tab-item'>
+                                <Link to="/monitorOrder" className="tab-link">Order Management</Link>
+                            </li>
+                            <li className='tab-item'>
+                                <Link to="/reviewdetails" className="tab-link">Product Reviews</Link>
+                            </li>
+                            <li className='tab-item'>
+                                <Link to="/incomedetails" className="tab-link">Income Details</Link>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+
+                <div className='column1'>
+                    <div className='form-group'>
+                    <th>Add Product</th>
+                        <input type="text" placeholder='Product Name' onChange={handleChange} name="prod_name" value={product.prod_name}/>
+                        <input type="text" placeholder='Product Description' onChange={handleChange} name="prod_description" value={product.prod_description}/>
+                        <input type="text" placeholder='Image URL' onChange={handleChange} name="image" value={product.image}/>
+                        <input type="number" placeholder='Price' onChange={handleChange} name="price" value={product.price}/>
+                        <div>
+                            <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}> 
+                                <option value="">Select a Category</option> 
+                                {category.map(cat => (
+                                    <option key={cat.id} value={cat.id}> 
+                                        {cat.cat_name} 
+                                    </option> 
+                                ))} 
+                            </select>
+                        </div> 
+                        <input type="number" placeholder='Quantity' onChange={handleChange} name="quantity" value={product.quantity}/>
+                        <button onClick={handleClick}>Submit</button>
+                        <button onClick={handleClear}>Clear</button>
+                    </div>
+                </div>
             </div>
-            <div className='column2'>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>prod_name</th>
-                            <th>prod_description</th>
-                            <th>Image</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>cat_id</th>
-                            <th>Update</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products.map((product) => (
-                            <tr key={product.id}>
-                                <td>{product.id}</td>
-                                <td>{product.prod_name}</td>
-                                <td>{product.prod_description}</td>
-                                <td>{product.image}</td>
-                                <td>{product.price}</td>
-                                <td>{product.quantity}</td>
-                                <td>{product.cat_id}</td>
-                                <td><button className='edit' onClick={() => handleEditClick(product)}>Edit</button></td>
-                                <td><button className='delete' onClick={() => handleDelete(product.id)}>Delete</button></td>
+            
+                <div className='column2'>
+                    <th className='column2-th'><p>Product List</p></th>    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>prod_name</th>
+                                <th>prod_description</th>
+                                <th>Image</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>cat_id</th>
+                                <th>Update</th>
+                                <th>Delete</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {products.map((product) => (
+                                <tr key={product.id}>
+                                    <td>{product.id}</td>
+                                    <td>{product.prod_name}</td>
+                                    <td>{product.prod_description}</td>
+                                    <td>{product.image}</td>
+                                    <td>{product.price}</td>
+                                    <td>{product.quantity}</td>
+                                    <td>{product.cat_id}</td>
+                                    <td><button className='edit' onClick={() => handleEditClick(product)}>Edit</button></td>
+                                    <td><button className='delete' onClick={() => handleDelete(product.id)}>Delete</button></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
-            {editProduct && (
-                <UpdateProduct
-                    product={editProduct}
-                    onClose={handleClosePopup}
-                    onSave={handleSave}
-                    category={category}
-                />
-            )}
+                {editProduct && (
+                    <UpdateProduct
+                        product={editProduct}
+                        onClose={handleClosePopup}
+                        onSave={handleSave}
+                        category={category}
+                    />
+                )}
 
-            <button className="View-Order Button">
-                <Link to="/monitorOrder"> View Orders </Link>
-            </button>
-
-            <button className="View-Review-Details Button">
-                <Link to="/reviewdetails"> Review Details </Link>
-            </button>
-
-            <button className="View-Income-Details Button">
-                <Link to="/incomedetails"> Income Details </Link>
-            </button>
+        <footer class="footer">
+            <p>&copy; 2025 Marketplace. All Rights Reserved.</p>
+        </footer>
+            
         </div>
+    
     );
 };
 

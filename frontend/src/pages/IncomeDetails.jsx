@@ -33,7 +33,9 @@ const IncomeDetails = () => {
 
     return (
         <div className="income-details-container">
-            <h3>Income Overview</h3>
+            
+            <div className="income-box">
+            <h4>Income Overview</h4>
             <table className="income-overview">
                 <thead>
                     <tr>
@@ -46,19 +48,21 @@ const IncomeDetails = () => {
                 <tbody>
                     <tr>
                         <td>Pending</td>
-                        <td>{overview.pending_week}</td>
-                        <td>{overview.pending_month}</td>
-                        <td>{overview.pending_total}</td>
+                        <td>${overview.pending_week}</td>
+                        <td>${overview.pending_month}</td>
+                        <td>${overview.pending_total}</td>
                     </tr>
                     <tr>
                         <td>Released</td>
-                        <td>{overview.released_week}</td>
-                        <td>{overview.released_month}</td>
-                        <td>{overview.released_total}</td>
+                        <td>${overview.released_week}</td>
+                        <td>${overview.released_month}</td>
+                        <td>${overview.released_total}</td>
                     </tr>
                 </tbody>
             </table>
-            <h3>Income Details</h3>
+            </div>
+            <div className="income-box">
+            <h4>Income Details</h4>
             <table className="income-details">
                 <thead>
                     <tr>
@@ -72,11 +76,12 @@ const IncomeDetails = () => {
                         <tr key={index}>
                             <td>{detail.buyer_name}</td>
                             <td>{detail.prod_name}</td>
-                            <td>{detail.release_amount}</td>
+                            <td>${detail.release_amount}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            </div>
         </div>
     );
 };
