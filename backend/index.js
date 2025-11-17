@@ -480,41 +480,52 @@ app.post("/cart/checkout", (req, res) => {
 
 // Fetch all category
 app.get("/category", (req, res) => {
-    const q = "SELECT * FROM category"
+    const q = "SELECT * FROM category";
     db.query(q, (err, data) => {
-        if (err) return res.json(err)
-        return res.json(data)
+        if (err) {
+            console.error("[DB ERROR] /category:", err);
+            return res.status(500).json({ message: "Database error", code: err.code || null });
+        }
+        return res.json(data);
     });
 });
 
 // Login endpoint
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
-
-    // Query to check if the user exists
-    const q = "SELECT * FROM users WHERE email = ?";
+    if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required." });
+    }
+    const q = "SELECT id, name, user_type, password FROM users WHERE email = ?";
     db.query(q, [email], (err, data) => {
-        if (err) return res.status(500).json({ message: "Server error." });
-
-        if (data.length === 0) {
-            // If no user is found
+        if (err) {
+            console.error("[DB ERROR] /login:", err);
+            return res.status(500).json({ message: "Database error", code: err.code || null });
+        }
+        if (!Array.isArray(data) || data.length === 0) {
             return res.status(401).json({ message: "Invalid email or password." });
         }
-
         const user = data[0];
-
-        // Check if the password matches
         if (user.password !== password) {
             return res.status(401).json({ message: "Invalid email or password." });
         }
-
-        // Respond with user information (excluding sensitive data)
         return res.status(200).json({
             message: "Login successful.",
             user_id: user.id,
             name: user.name,
-            role: user.user_type, // 'buyer' or 'seller'
+            role: user.user_type
         });
+    });
+});
+
+// Basic health check to verify DB connectivity explicitly
+app.get("/health", (req, res) => {
+    db.query("SELECT 1 AS ok", (err, rows) => {
+        if (err) {
+            console.error("[DB ERROR] /health:", err);
+            return res.status(500).json({ status: "down", message: "Database unreachable", code: err.code || null });
+        }
+        res.json({ status: "up", db: rows[0].ok === 1 });
     });
 });
 
