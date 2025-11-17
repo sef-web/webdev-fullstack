@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import UpdateProduct from '../UpdateProduct/UpdateProduct';
 import API_URL from '../../../config/api';
+import { openUploadWidget } from '../../../config/cloudinary';
 import './SellerPage.css';
 import './SellerNotif.css';
 
@@ -91,6 +92,17 @@ const SellerPage = () => {
 
     const handleChange = (e) => {
         setProduct((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleUploadImage = () => {
+        const folderPath = `products/seller_${seller_Id}`;
+        openUploadWidget({
+            folder: folderPath,
+            onSuccess: (info) => {
+                setProduct((prev) => ({ ...prev, image: info.secure_url }));
+            },
+            onError: (err) => console.error('Upload failed:', err)
+        });
     };
 
     const handleClick = async (e) => {
@@ -218,7 +230,13 @@ const SellerPage = () => {
                     <th>Add Product</th>
                         <input type="text" placeholder='Product Name' onChange={handleChange} name="prod_name" value={product.prod_name}/>
                         <input type="text" placeholder='Product Description' onChange={handleChange} name="prod_description" value={product.prod_description}/>
-                        <input type="text" placeholder='Image URL' onChange={handleChange} name="image" value={product.image}/>
+                        <div className="image-input-row">
+                            <input type="text" placeholder='Image URL' onChange={handleChange} name="image" value={product.image}/>
+                            <button type="button" onClick={handleUploadImage}>Upload Image</button>
+                        </div>
+                        {product.image && (
+                            <img src={product.image} alt="Preview" style={{ maxWidth: '100px', display: 'block', marginTop: '8px' }} />
+                        )}
                         <input type="number" placeholder='Price' onChange={handleChange} name="price" value={product.price}/>
                         <div>
                             <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}> 

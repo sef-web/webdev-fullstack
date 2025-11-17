@@ -2,15 +2,19 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API_URL from '../../../config/api';
+import { openUploadWidget } from '../../../config/cloudinary';
 
 const AddProduct = () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const sellerId = user?.user_id;
+
     const [product, setProduct] = useState({
         prod_name: "",
         prod_description: "",
         price: null,
         image: "",
         stock_quantity: null,
-        seller_id: "" // Replace with actual seller ID if available
+        seller_id: sellerId || "" // prefill if available
     });
     const navigate = useNavigate();
 
@@ -28,6 +32,15 @@ const AddProduct = () => {
         }
     };
 
+    const handleUploadImage = () => {
+        const folderPath = `products/seller_${sellerId || 'unknown'}`;
+        openUploadWidget({
+            folder: folderPath,
+            onSuccess: (info) => setProduct((prev) => ({ ...prev, image: info.secure_url })),
+            onError: (err) => console.error('Upload failed:', err),
+        });
+    };
+
     console.log(product);
 
     return (
@@ -38,7 +51,13 @@ const AddProduct = () => {
             </td><input type="text" placeholder='Product Name' onChange={handleChange} name="prod_name" />
             <input type="text" placeholder='Product Description' onChange={handleChange} name="prod_description" />
             <input type="text" placeholder='Price' onChange={handleChange} name="price" />
-            <input type="text" placeholder='Image URL' onChange={handleChange} name="image" />
+            <div className='image-input-row'>
+                <input type="text" placeholder='Image URL' onChange={handleChange} name="image" value={product.image} />
+                <button type="button" onClick={handleUploadImage}>Upload Image</button>
+            </div>
+            {product.image && (
+                <img src={product.image} alt="Preview" style={{ maxWidth: '120px', display: 'block', marginTop: '8px' }} />
+            )}
             <input type="number" placeholder='Stock Quantity' onChange={handleChange} name="stock_quantity" />
             <input type="text" placeholder='Seller ID' onChange={handleChange} name="seller_id" />
 
