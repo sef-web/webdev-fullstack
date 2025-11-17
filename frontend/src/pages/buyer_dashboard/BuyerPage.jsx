@@ -274,7 +274,7 @@ const BuyerPage = () => {
               <span className="price">${item.price}</span>
               <span className="rating">
                 <span className="Star"> &#9733; </span>
-                {item.avg_rating.toFixed(1)} / 5 |{" "}
+                {(Number(item.avg_rating) || 0).toFixed(1)} / 5 |{" "}
                 {totalSold.find((sold) => sold.prod_id === item.id)?.total_sold || 0} Sold
               </span>
               
