@@ -529,6 +529,18 @@ app.get("/health", (req, res) => {
     });
 });
 
+// Debug endpoint to list tables in current database
+app.get("/debug/tables", (req, res) => {
+    const currentDb = db.config.database;
+    db.query("SHOW TABLES", (err, rows) => {
+        if (err) {
+            console.error("[DB ERROR] /debug/tables:", err);
+            return res.status(500).json({ message: "SHOW TABLES failed", code: err.code || null, db: currentDb });
+        }
+        res.json({ database: currentDb, tables: rows });
+    });
+});
+
 //sign up 
 app.post("/Signup", (req, res) => {
     const q = "INSERT INTO users (`username`, `password`, `name`, `email`, `contact`, `address`, `user_type`) VALUES (?)"
