@@ -56,6 +56,50 @@ function runQuery(sql, params, res, okCallback) {
     });
 }
 
+// Deep debug status (do NOT leave enabled in production long-term)
+app.get('/debug/status', (req, res) => {
+    // First: which database are we pointing at?
+    db.query('SELECT DATABASE() AS current_db', (dbErr, dbRows) => {
+        const currentDbName = dbRows && dbRows[0] ? dbRows[0].current_db : null;
+        // Second: list tables
+        db.query('SHOW TABLES', (tablesErr, tablesRows) => {
+            if (tablesErr) {
+                console.error('[DB ERROR] SHOW TABLES', tablesErr.code, tablesErr.sqlMessage);
+            }
+            // Third: attempt simple select against users table to see if it exists
+            db.query('SELECT id, email FROM users LIMIT 1', (usersErr, usersRows) => {
+                if (usersErr) {
+                    console.error('[DB ERROR] SELECT users', usersErr.code, usersErr.sqlMessage);
+                }
+                const safeConfig = {
+                    host: process.env.DB_HOST,
+                    port: process.env.DB_PORT,
+                    user: process.env.DB_USER,
+                    database: process.env.DB_NAME
+                };
+                return res.json({
+                    config: safeConfig,
+                    current_db: currentDbName,
+                    tables_error: tablesErr ? {
+                        code: tablesErr.code,
+                        errno: tablesErr.errno,
+                        sqlState: tablesErr.sqlState,
+                        message: tablesErr.sqlMessage
+                    } : null,
+                    tables: tablesErr ? null : tablesRows,
+                    users_probe_error: usersErr ? {
+                        code: usersErr.code,
+                        errno: usersErr.errno,
+                        sqlState: usersErr.sqlState,
+                        message: usersErr.sqlMessage
+                    } : null,
+                    users_sample: usersErr ? null : usersRows
+                });
+            });
+        });
+    });
+});
+
 // Fetch all products with seller-based filtering, category, and sorting options
 app.get("/products", (req, res) => {
     const { seller_id, cat_id, sort_by, order } = req.query;
