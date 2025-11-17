@@ -1,14 +1,33 @@
 import express from "express"
-import mysql from "mysql"
+import mysql from "mysql2"
 import cors from "cors"
+import dotenv from "dotenv"
+
+// Load environment variables
+dotenv.config()
 
 const app = express()
 
+// Database configuration with SSL for Aiven
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "marketplace"
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT) || 3306,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    ssl: {
+        ca: process.env.CA_CERT,
+        rejectUnauthorized: true
+    }
+});
+
+// Test database connection
+db.connect((err) => {
+    if (err) {
+        console.error('Database connection failed:', err.message);
+        return;
+    }
+    console.log('Successfully connected to Aiven MySQL database');
 });
 
 app.use(express.json())
@@ -593,6 +612,7 @@ app.post("/purchase", (req, res) => {
     });
 });
 
-app.listen(8800, () => {
-    console.log("Connected to backend")
+const PORT = process.env.PORT || 8800;
+app.listen(PORT, () => {
+    console.log(`Connected to backend on port ${PORT}`)
 });
