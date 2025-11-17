@@ -8,6 +8,14 @@ dotenv.config()
 
 const app = express()
 
+// Global process-level error logging
+process.on('uncaughtException', (err) => {
+    console.error('[FATAL] Uncaught Exception:', err.stack || err.message);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('[FATAL] Unhandled Rejection:', reason);
+});
+
 // Database configuration with SSL for Aiven
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -24,7 +32,7 @@ const db = mysql.createConnection({
 // Test database connection
 db.connect((err) => {
     if (err) {
-        console.error('Database connection failed:', err.message);
+        console.error('Database connection failed:', err.code, err.message);
         return;
     }
     console.log('Successfully connected to Aiven MySQL database');
@@ -36,6 +44,17 @@ app.use(cors())
 app.get("/", (req, res) => {
     res.json("Hello, this is the backend")
 });
+
+// Helper to safely run queries and standardize errors
+function runQuery(sql, params, res, okCallback) {
+    db.query(sql, params, (err, data) => {
+        if (err) {
+            console.error('[DB ERROR]', sql, err.code, err.sqlMessage);
+            return res.status(500).json({ message: 'Database error', code: err.code || null });
+        }
+        okCallback(data);
+    });
+}
 
 // Fetch all products with seller-based filtering, category, and sorting options
 app.get("/products", (req, res) => {
@@ -72,10 +91,7 @@ app.get("/products", (req, res) => {
       }
     }
   
-    db.query(query, params, (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json(data);
-    });
+        runQuery(query, params, res, (data) => res.status(200).json(data));
 });
 
   app.get("/notifications", async (req, res) => {
@@ -481,13 +497,7 @@ app.post("/cart/checkout", (req, res) => {
 // Fetch all category
 app.get("/category", (req, res) => {
     const q = "SELECT * FROM category";
-    db.query(q, (err, data) => {
-        if (err) {
-            console.error("[DB ERROR] /category:", err);
-            return res.status(500).json({ message: "Database error", code: err.code || null });
-        }
-        return res.json(data);
-    });
+    runQuery(q, [], res, (data) => res.json(data));
 });
 
 // Login endpoint
@@ -497,18 +507,10 @@ app.post("/login", (req, res) => {
         return res.status(400).json({ message: "Email and password are required." });
     }
     const q = "SELECT id, name, user_type, password FROM users WHERE email = ?";
-    db.query(q, [email], (err, data) => {
-        if (err) {
-            console.error("[DB ERROR] /login:", err);
-            return res.status(500).json({ message: "Database error", code: err.code || null });
-        }
-        if (!Array.isArray(data) || data.length === 0) {
-            return res.status(401).json({ message: "Invalid email or password." });
-        }
-        const user = data[0];
-        if (user.password !== password) {
-            return res.status(401).json({ message: "Invalid email or password." });
-        }
+    runQuery(q, [email], res, (rows) => {
+        if (!rows.length) return res.status(401).json({ message: "Invalid email or password." });
+        const user = rows[0];
+        if (user.password !== password) return res.status(401).json({ message: "Invalid email or password." });
         return res.status(200).json({
             message: "Login successful.",
             user_id: user.id,
@@ -520,26 +522,19 @@ app.post("/login", (req, res) => {
 
 // Basic health check to verify DB connectivity explicitly
 app.get("/health", (req, res) => {
-    db.query("SELECT 1 AS ok", (err, rows) => {
-        if (err) {
-            console.error("[DB ERROR] /health:", err);
-            return res.status(500).json({ status: "down", message: "Database unreachable", code: err.code || null });
-        }
-        res.json({ status: "up", db: rows[0].ok === 1 });
+    runQuery("SELECT 1 AS ok", [], res, (rows) => {
+        res.json({ status: "up", db: rows[0]?.ok === 1 });
     });
 });
 
 // Debug endpoint to list tables in current database
 app.get("/debug/tables", (req, res) => {
     const currentDb = db.config.database;
-    db.query("SHOW TABLES", (err, rows) => {
-        if (err) {
-            console.error("[DB ERROR] /debug/tables:", err);
-            return res.status(500).json({ message: "SHOW TABLES failed", code: err.code || null, db: currentDb });
-        }
-        res.json({ database: currentDb, tables: rows });
-    });
+    runQuery("SHOW TABLES", [], res, (rows) => res.json({ database: currentDb, tables: rows }));
 });
+
+// Start server and enumerate registered routes for debugging (moved near end to avoid duplicate PORT)
+// NOTE: final listen is defined at bottom of file.
 
 //sign up 
 app.post("/Signup", (req, res) => {
