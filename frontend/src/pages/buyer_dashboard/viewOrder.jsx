@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_URL from '../../config';
 
 const ViewOrder = () => {
   const [purchases, setPurchases] = useState([]);
@@ -13,7 +14,7 @@ const ViewOrder = () => {
   useEffect(() => {
     const fetchAllPurchases = async () => {
       try {
-        const res = await axios.get("http://localhost:8800/orders", {
+        const res = await axios.get(`${API_URL}/orders`, {
           params: { buyer_id },
         });
         setPurchases(res.data);
@@ -26,7 +27,7 @@ const ViewOrder = () => {
 
   const handleAddReview = async () => {
     try {
-      const res = await axios.post("http://localhost:8800/addreview", {
+      const res = await axios.post(`${API_URL}/addreview`, {
         prod_id: selectedOrder.prod_id,
         buyer_id: selectedOrder.buyer_id,
         rating: rating,

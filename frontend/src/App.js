@@ -54,7 +54,7 @@ function App() {
           <Route path="/" element={<Welcome />} />
 
           {/* Sign Up / login for user */}
-          <Route path="/Signup" element={<Signup />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />}/>
 
           {/* Seller side */}

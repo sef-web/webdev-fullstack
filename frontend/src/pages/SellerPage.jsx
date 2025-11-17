@@ -56,7 +56,7 @@ const SellerPage = () => {
     
     const handleSave = async (updatedProduct) => {
         try {
-            await axios.put(`http://localhost:8800/products/${updatedProduct.id}`, updatedProduct);
+            await axios.put(`${API_URL}/products/${updatedProduct.id}`, updatedProduct);
             setEditProduct(null); 
             window.location.reload();
         } catch (err) {
@@ -70,7 +70,7 @@ const SellerPage = () => {
     
     const handleDelete = async (id) => {
         try {
-            await axios.delete("http://localhost:8800/products/" + id);
+            await axios.delete(`${API_URL}/products/${id}`);
             window.location.reload();
         } catch (err) {
             console.log(err);
@@ -95,7 +95,7 @@ const SellerPage = () => {
         e.preventDefault();
         try {
             const newProduct = {...product, cat_id: selectedCategory, seller_id: seller_Id};
-            await axios.post("http://localhost:8800/products", newProduct);
+            await axios.post(`${API_URL}/products`, newProduct);
             setProducts((prev) => [...prev, newProduct]);
             alert("Product added successfully.");
         } catch (err) {
@@ -127,7 +127,7 @@ const SellerPage = () => {
     const handleLogout = () => {
         console.log("User logged out");
         localStorage.removeItem('user'); // Clear user data
-        window.location.href = "/Login";
+        window.location.href = "/login";
     };
 
     return (
@@ -198,7 +198,7 @@ const SellerPage = () => {
                     <nav>
                         <ul className='tab-list'>
                             <li className='tab-item'>
-                                <Link to="/monitorOrder" className="tab-link">Order Management</Link>
+                                <Link to="/monitororder" className="tab-link">Order Management</Link>
                             </li>
                             <li className='tab-item'>
                                 <Link to="/reviewdetails" className="tab-link">Product Reviews</Link>

@@ -10,8 +10,8 @@ const WelcomePage = () => {
                     This is an E-commerce website where you can find quality products.
                 </p>
                 <div className="welcome-buttons">
-                    <Link to="/Login" className="welcome-btn">Login</Link>
-                    <Link to="/Signup" className="welcome-btn">Sign Up</Link>
+                    <Link to="/login" className="welcome-btn">Login</Link>
+                    <Link to="/signup" className="welcome-btn">Sign Up</Link>
                 </div>
             </div>
         </div>

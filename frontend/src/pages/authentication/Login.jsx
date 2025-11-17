@@ -24,7 +24,7 @@ const Login = () => {
             localStorage.setItem('user', JSON.stringify(res.data));
             if (userRole === "buyer") navigate("/buyerpage");
             else if (userRole === "seller") {
-                navigate("/SellerPage");
+                navigate("/sellerpage");
             }
         } catch (err) {
             console.log(err);

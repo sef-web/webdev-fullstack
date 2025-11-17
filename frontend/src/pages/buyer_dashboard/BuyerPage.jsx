@@ -173,7 +173,7 @@ const BuyerPage = () => {
   const handleLogout = () => {
       console.log("User logged out");
       localStorage.removeItem('user'); // Clear user data
-      window.location.href = "/Login";
+      window.location.href = "/login";
   };
 
   return (
@@ -293,14 +293,14 @@ const BuyerPage = () => {
 
       <div className="action-buttons">
         <button className="btn action-btn">
-          <Link to="/BuyerCart">
+          <Link to="/buyercart">
             <img src="/images/cart-icon.png" alt="Cart Icon" className="btn-icon" />
             <p>Shopping Cart</p>
           </Link>
         </button>
 
         <button className="btn action-btn">
-          <Link to="/viewOrder">
+          <Link to="/vieworder">
             <img src="/images/order-icon.png" alt="Order Icon" className="btn-icon" />
             <p>My Order</p>
           </Link>
