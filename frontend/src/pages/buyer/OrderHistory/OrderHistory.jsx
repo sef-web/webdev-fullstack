@@ -3,6 +3,19 @@ import axios from "axios";
 import API_URL from '../../../config/api';
 import './OrderHistory.css';
 
+// Helper function to fix image URLs
+const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return null;
+    if (imageUrl.includes('/uploads/')) {
+        const filename = imageUrl.split('/uploads/').pop();
+        return `${API_URL}/uploads/${filename}`;
+    }
+    if (!imageUrl.startsWith('http')) {
+        return `${API_URL}/uploads/${imageUrl}`;
+    }
+    return imageUrl;
+};
+
 const ViewOrder = () => {
     const [orderHistory, setOrderHistory] = useState([]);
 
@@ -38,7 +51,7 @@ const ViewOrder = () => {
                         <div className="order-body">
                             <div className="image-container">
                                 {history.image && (
-                                    <img src={history.image} alt={history.prod_name} />
+                                    <img src={getImageUrl(history.image)} alt={history.prod_name} />
                                 )}
                             </div>
                             <div className="product-details">

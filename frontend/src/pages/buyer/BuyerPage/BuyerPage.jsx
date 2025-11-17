@@ -268,9 +268,25 @@ const BuyerPage = () => {
     <div className="buyer-container">
         {/* Product Cards */}
         <div className="card-container">
-          {items.map((item) => (
+          {items.map((item) => {
+            // Fix image URL - extract filename and use correct backend URL
+            const getImageUrl = (imageUrl) => {
+              if (!imageUrl) return null;
+              // If it's a full URL with wrong domain, extract filename
+              if (imageUrl.includes('/uploads/')) {
+                const filename = imageUrl.split('/uploads/').pop();
+                return `${API_URL}/uploads/${filename}`;
+              }
+              // If it's just a filename, prepend backend URL
+              if (!imageUrl.startsWith('http')) {
+                return `${API_URL}/uploads/${imageUrl}`;
+              }
+              return imageUrl;
+            };
+
+            return (
             <div className="card" key={item.id}>
-              {item.image && <img src={item.image} alt={item.prod_name} />}
+              {item.image && <img src={getImageUrl(item.image)} alt={item.prod_name} />}
               <h2>{item.prod_name}</h2>
               <p>{item.prod_description}</p>
               <span className="stocks">stock: {item.quantity} <br /> </span> 
@@ -291,7 +307,8 @@ const BuyerPage = () => {
               </div>
 
             </div>
-          ))}
+            );
+          })}
         </div>
 
       <div className="action-buttons">

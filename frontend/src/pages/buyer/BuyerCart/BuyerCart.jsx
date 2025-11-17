@@ -3,6 +3,19 @@ import axios from "axios";
 import API_URL from '../../../config/api';
 import './BuyerCart.css';
 
+// Helper function to fix image URLs
+const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return null;
+    if (imageUrl.includes('/uploads/')) {
+        const filename = imageUrl.split('/uploads/').pop();
+        return `${API_URL}/uploads/${filename}`;
+    }
+    if (!imageUrl.startsWith('http')) {
+        return `${API_URL}/uploads/${imageUrl}`;
+    }
+    return imageUrl;
+};
+
 const BuyerCart = () => {
     const [cartItems, setCartItems] = useState([]); 
     const [selectedItems, setSelectedItems] = useState([]);
@@ -110,7 +123,7 @@ const BuyerCart = () => {
                                 )}
                                 onChange={() => toggleItemSelection(item)}
                             />
-                            <img src={item.image} alt={item.prod_name} />
+                            <img src={getImageUrl(item.image)} alt={item.prod_name} />
                             <div className="cart-item-details">
                                 <h2 className="cart-item-name">{item.prod_name}</h2>
                                 <p className="cart-item-description">
