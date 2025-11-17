@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_URL from '../../config';
 
 
 const BuyerCart = () => {
@@ -13,7 +14,7 @@ const BuyerCart = () => {
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const res = await axios.get("http://localhost:8800/cart", {
+                const res = await axios.get(`${API_URL}/cart`, {
                     params: { buyer_id: buyer_id },
                 });
                 setCartItems(res.data);
@@ -28,7 +29,7 @@ const BuyerCart = () => {
     const updateQuantity = async (cartId, quantity) => {
         if (quantity <= 0) return;
         try {
-            await axios.put("http://localhost:8800/cart/update", {
+            await axios.put(`${API_URL}/cart/update`, {
                 cart_id: cartId,
                 quantity,
             });
@@ -47,7 +48,7 @@ const BuyerCart = () => {
 
     const deleteCartItem = async (cartId) => {
         try {
-            await axios.delete(`http://localhost:8800/cart/delete/${cartId}`);
+            await axios.delete(`${API_URL}/cart/delete/${cartId}`);
             setCartItems((prev) => prev.filter((item) => item.cart_id !== cartId)); // Optimistic update
         } catch (err) {
             console.error("Error deleting cart item:", err);
@@ -69,7 +70,7 @@ const BuyerCart = () => {
         }));
 
         try {
-            await axios.post("http://localhost:8800/cart/checkout", {
+            await axios.post(`${API_URL}/cart/checkout`, {
                 buyer_id: buyer_id,
                 cartItems: cartData,
             });

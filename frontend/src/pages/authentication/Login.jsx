@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../../config';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({
@@ -17,7 +18,7 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:8800/login", credentials);
+            const res = await axios.post(`${API_URL}/login`, credentials);
             localStorage.removeItem('user');
             const userRole = res.data.role;
             localStorage.setItem('user', JSON.stringify(res.data));

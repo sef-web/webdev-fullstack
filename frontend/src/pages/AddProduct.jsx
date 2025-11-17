@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../config';
 
 const AddProduct = () => {
     const [product, setProduct] = useState({
@@ -20,7 +21,7 @@ const AddProduct = () => {
     const handleClick = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:8800/products", product);
+            await axios.post(`${API_URL}/products`, product);
             navigate("/");
         } catch (err) {
             console.log(err);

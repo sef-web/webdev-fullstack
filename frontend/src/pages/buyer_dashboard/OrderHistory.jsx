@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_URL from '../../config';
 
 const ViewOrder = () => {
     const [orderHistory, setOrderHistory] = useState([]);
@@ -10,7 +11,7 @@ const ViewOrder = () => {
     useEffect(() => {
         const fetchAllComplete = async () => {
             try {
-                const res = await axios.get("http://localhost:8800/orderhistory", {
+                const res = await axios.get(`${API_URL}/orderhistory`, {
                     params: { buyer_id },
                 });
                 setOrderHistory(res.data);

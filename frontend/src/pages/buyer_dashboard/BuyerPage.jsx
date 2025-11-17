@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import API_URL from '../../config';
 
 const BuyerPage = () => {
   const [items, setItems] = useState([]); // Products
@@ -30,7 +31,7 @@ const BuyerPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:8800/products", {
+        const res = await axios.get(`${API_URL}/products`, {
           params: {
             cat_id: selectedCategoryId,
             sort_by: selectedSortBy,
@@ -49,7 +50,7 @@ const BuyerPage = () => {
   useEffect(() => {
     const userContacts = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/users?buyer_id=${buyer_Id}`)
+        const res = await axios.get(`${API_URL}/users?buyer_id=${buyer_Id}`)
         setUserContact(res.data);
       } catch (err) {
         console.error(err);
@@ -62,7 +63,7 @@ const BuyerPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:8800/category");
+        const res = await axios.get(`${API_URL}/category`);
         setCategories(res.data);
       } catch (err) {
         console.error(err);
@@ -80,7 +81,7 @@ const BuyerPage = () => {
     };
 
     try {
-      const res = await axios.post("http://localhost:8800/addtocart", cartItem);
+      const res = await axios.post(`${API_URL}/addtocart`, cartItem);
       setCartData((prevCartData) => [...prevCartData, cartItem]); // Update cart state
       alert(res.data.message);
     } catch (err) {
@@ -110,7 +111,7 @@ const BuyerPage = () => {
       },
     ];
     try {
-      const res = await axios.post("http://localhost:8800/orders", order);
+      const res = await axios.post(`${API_URL}/orders`, order);
       alert(res.data.message);
       setItems((prevItems) =>
         prevItems.map((item) =>
@@ -136,7 +137,7 @@ const BuyerPage = () => {
     useEffect(() => {
       const fetchNotifications = async () => {
         try {
-          const res = await axios.get(`http://localhost:8800/notifications`, {
+          const res = await axios.get(`${API_URL}/notifications`, {
             params: { buyer_id: buyer_Id },
           });
           setNotifications(res.data);
@@ -151,7 +152,7 @@ const BuyerPage = () => {
     useEffect(() => {
       const soldItems = async () => {
         try {
-          const res = await axios.get("http://localhost:8800/totalsold");
+          const res = await axios.get(`${API_URL}/totalsold`);
           setTotalSold(res.data);
         } catch (err) {
           console.error(err);

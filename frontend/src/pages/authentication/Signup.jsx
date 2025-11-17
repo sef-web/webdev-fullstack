@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../../config';
 
 const Signup = () => {
     const [user, setUser] = useState({
@@ -22,7 +23,7 @@ const Signup = () => {
         e.preventDefault();
         try {
             // Post the user data to your backend
-            await axios.post("http://localhost:8800/signup", user);
+            await axios.post(`${API_URL}/signup`, user);
             alert("Signup successful! Please login.");
             navigate("/login"); // Redirect to login after successful signup
         } catch (err) {

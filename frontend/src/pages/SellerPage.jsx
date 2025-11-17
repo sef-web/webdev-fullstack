@@ -3,6 +3,7 @@ import axios from 'axios';
 //import { useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import UpdateProduct from './UpdateProduct';
+import API_URL from '../config';
 
 const SellerPage = () => {
     const [products, setProducts] = useState([]);
@@ -24,10 +25,10 @@ const SellerPage = () => {
     useEffect(() => {
         const fetchAllProducts = async () => {
             try {
-                const res = await axios.get(`http://localhost:8800/products?seller_id=${seller_Id}`);
+                const res = await axios.get(`${API_URL}/products?seller_id=${seller_Id}`);
                 setProducts(res.data);
 
-                const catRes = await axios.get("http://localhost:8800/category");
+                const catRes = await axios.get(`${API_URL}/category`);
                 setCategory(catRes.data);
 
                 // Calculate low stock alerts

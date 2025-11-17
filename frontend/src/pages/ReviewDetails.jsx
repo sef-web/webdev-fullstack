@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_URL from '../config';
 
 const ViewOrder = () => {
     const [reviews, setReviews] = useState([]);
@@ -10,7 +11,7 @@ const ViewOrder = () => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const res = await axios.get("http://localhost:8800/reviewdetails", {
+                const res = await axios.get(`${API_URL}/reviewdetails`, {
                     params: { seller_id },
                 });
                 setReviews(res.data);

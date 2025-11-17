@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_URL from '../config';
 
 const IncomeDetails = () => {
     const [overview, setOverview] = useState({
@@ -19,7 +20,7 @@ const IncomeDetails = () => {
     useEffect(() => {
         const fetchIncomeDetails = async () => {
             try {
-                const res = await axios.get("http://localhost:8800/incomedetails", {
+                const res = await axios.get(`${API_URL}/incomedetails`, {
                     params: { seller_id },
                 });
                 setOverview(res.data.overview);
