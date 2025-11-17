@@ -172,7 +172,8 @@ const BuyerPage = () => {
   
   const handleLogout = () => {
       console.log("User logged out");
-      window.location.href = "/login";
+      localStorage.removeItem('user'); // Clear user data
+      window.location.href = "/Login";
   };
 
   return (
