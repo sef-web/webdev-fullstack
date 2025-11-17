@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import API_URL from '../../config';
+import API_URL from '../../../config/api';
+import './BuyerPage.css';
+import './BuyerNotif.css';
+import '../../../styles/checkout.css';
 
 const BuyerPage = () => {
   const [items, setItems] = useState([]); // Products

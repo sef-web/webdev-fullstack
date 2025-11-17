@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import API_URL from '../../config';
-
+import API_URL from '../../../config/api';
+import './BuyerCart.css';
 
 const BuyerCart = () => {
     const [cartItems, setCartItems] = useState([]); 

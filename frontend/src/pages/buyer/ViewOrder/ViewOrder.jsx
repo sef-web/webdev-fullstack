@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import API_URL from '../../config';
+import API_URL from '../../../config/api';
+import './ViewOrder.css';
 
 const ViewOrder = () => {
   const [purchases, setPurchases] = useState([]);

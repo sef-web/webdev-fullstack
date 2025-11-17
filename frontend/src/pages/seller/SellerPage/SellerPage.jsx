@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 //import { useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import UpdateProduct from './UpdateProduct';
-import API_URL from '../config';
+import UpdateProduct from '../UpdateProduct/UpdateProduct';
+import API_URL from '../../../config/api';
+import './SellerPage.css';
+import './SellerNotif.css';
 
 const SellerPage = () => {
     const [products, setProducts] = useState([]);

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import API_URL from '../../config';
+import API_URL from '../../../config/api';
+import './Login.css';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({

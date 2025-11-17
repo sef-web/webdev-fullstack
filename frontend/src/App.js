@@ -1,49 +1,30 @@
-
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
 
-import  Welcome from "./pages/authentication/welcome";
-import Signup from "./pages/authentication/Signup";
-import Login from "./pages/authentication/Login";
+// Authentication Pages
+import Welcome from "./pages/auth/Welcome/Welcome";
+import Signup from "./pages/auth/Signup/Signup";
+import Login from "./pages/auth/Login/Login";
 
-//seller
-import SellerPage from "./pages/SellerPage";
-import UpdateProduct from "./pages/UpdateProduct";
-import MonitorOrder from "./pages/monitorOrder";
-import ReviewDetails from "./pages/ReviewDetails";
-import IncomeDetails from "./pages/IncomeDetails";
+// Seller Pages
+import SellerPage from "./pages/seller/SellerPage/SellerPage";
+import UpdateProduct from "./pages/seller/UpdateProduct/UpdateProduct";
+import MonitorOrder from "./pages/seller/MonitorOrder/MonitorOrder";
+import ReviewDetails from "./pages/seller/ReviewDetails/ReviewDetails";
+import IncomeDetails from "./pages/seller/IncomeDetails/IncomeDetails";
 
-//buyer
-import BuyerPage from "./pages/buyer_dashboard/BuyerPage";
-import BuyerCart from "./pages/buyer_dashboard/BuyerCart";
-import ViewOrder from "./pages/buyer_dashboard/viewOrder";
-import OrderHistory from "./pages/buyer_dashboard/OrderHistory";
+// Buyer Pages
+import BuyerPage from "./pages/buyer/BuyerPage/BuyerPage";
+import BuyerCart from "./pages/buyer/BuyerCart/BuyerCart";
+import ViewOrder from "./pages/buyer/ViewOrder/ViewOrder";
+import OrderHistory from "./pages/buyer/OrderHistory/OrderHistory";
 
-//designs
-//user authentication
-import "./welcomePage.css";
-import "./LoginDes.css";
-import "./signUp.css";
-
-//seller page including header & footer
-import "./style.css";
-import "./MonitorOrder.css";
-import "./ReviewDetails.css";
-import "./SellerNotif.css";
-import "./IncomeDetails.css";
-
-//buyer page (productcard is the main design)
-import "./productCard.css";
-import "./buyerCartStyles.css";
-import "./confirmOrder.css";
-import "./viewOrder.css";
-import "./OrderHistory.css";
-import "./BuyerNotif.css";
-
-import "./logout-btn.css";
+// Global Styles
+import "./styles/index.css";
+import "./styles/logout-btn.css";
 
 function App() {
   return (
