@@ -36,6 +36,27 @@ db.connect((err) => {
         return;
     }
     console.log('Successfully connected to Aiven MySQL database');
+    // Ensure a default database is selected
+    if (!db.config.database) {
+        console.warn('[DB WARNING] No DB_NAME provided. Set the DB_NAME env variable (e.g. defaultdb).');
+    } else {
+        db.query('SELECT DATABASE() AS current_db', (e2, rows) => {
+            if (e2) {
+                console.error('[DB ERROR] SELECT DATABASE()', e2.code, e2.sqlMessage);
+            } else if (!rows[0].current_db) {
+                console.warn('[DB WARNING] current_db returned null, attempting changeUser to', db.config.database);
+                db.changeUser({ database: db.config.database }, (e3) => {
+                    if (e3) {
+                        console.error('[DB ERROR] changeUser failed', e3.code, e3.sqlMessage);
+                    } else {
+                        console.log('[DB INFO] Database switched to', db.config.database);
+                    }
+                });
+            } else {
+                console.log('[DB INFO] Active database:', rows[0].current_db);
+            }
+        });
+    }
 });
 
 app.use(express.json())
@@ -84,14 +105,16 @@ app.get('/debug/status', (req, res) => {
                         code: tablesErr.code,
                         errno: tablesErr.errno,
                         sqlState: tablesErr.sqlState,
-                        message: tablesErr.sqlMessage
+                        message: tablesErr.sqlMessage,
+                        name: tablesErr.name
                     } : null,
                     tables: tablesErr ? null : tablesRows,
                     users_probe_error: usersErr ? {
                         code: usersErr.code,
                         errno: usersErr.errno,
                         sqlState: usersErr.sqlState,
-                        message: usersErr.sqlMessage
+                        message: usersErr.sqlMessage,
+                        name: usersErr.name
                     } : null,
                     users_sample: usersErr ? null : usersRows
                 });
