@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import API_URL from '../../../config/api';
 import './ViewOrder.css';
 
@@ -45,6 +46,7 @@ const ViewOrder = () => {
 
   return (
     <div className="view-order-container">
+      <Link to="/buyerpage" style={{ display: 'inline-block', marginBottom: '15px', padding: '8px 16px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>← Back to Shop</Link>
       <h1 className="title">My Orders</h1>
       {purchases.length > 0 ? (
         <table className="order-table">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import API_URL from '../../../config/api';
 import './MonitorOrder.css';
 
@@ -45,6 +46,7 @@ const ViewOrder = () => {
 
     return (
         <div className="monitor-order-container">
+            <Link to="/sellerpage" style={{ display: 'inline-block', marginBottom: '15px', padding: '8px 16px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>← Back to Seller Page</Link>
             <h4>Order List</h4>
             <table className="column2-table">
                 <thead>

@@ -94,14 +94,28 @@ const SellerPage = () => {
         setProduct((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
+    const [isUploading, setIsUploading] = useState(false);
+
     const handleUploadImage = () => {
+        if (isUploading) {
+            alert("Upload already in progress. Please wait.");
+            return;
+        }
+        
+        setIsUploading(true);
         const folderPath = `products/seller_${seller_Id}`;
+        
         openUploadWidget({
             folder: folderPath,
             onSuccess: (info) => {
                 setProduct((prev) => ({ ...prev, image: info.secure_url }));
+                setIsUploading(false);
+                alert("Image uploaded successfully!");
             },
-            onError: (err) => console.error('Upload failed:', err)
+            onError: (err) => {
+                console.error('Upload failed:', err);
+                setIsUploading(false);
+            }
         });
     };
 
@@ -232,7 +246,9 @@ const SellerPage = () => {
                         <input type="text" placeholder='Product Description' onChange={handleChange} name="prod_description" value={product.prod_description}/>
                         <div className="image-input-row">
                             <input type="text" placeholder='Image URL' onChange={handleChange} name="image" value={product.image}/>
-                            <button type="button" onClick={handleUploadImage}>Upload Image</button>
+                            <button type="button" onClick={handleUploadImage} disabled={isUploading}>
+                                {isUploading ? 'Uploading...' : 'Upload Image'}
+                            </button>
                         </div>
                         {product.image && (
                             <img src={product.image} alt="Preview" style={{ maxWidth: '100px', display: 'block', marginTop: '8px' }} />

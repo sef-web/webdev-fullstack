@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import API_URL from '../../../config/api';
 import './BuyerCart.css';
 
@@ -109,7 +110,7 @@ const BuyerCart = () => {
 
     return (
         <div className="buyer-cart-container">
-
+            <Link to="/buyerpage" style={{ display: 'inline-block', marginBottom: '15px', padding: '8px 16px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>← Back to Shop</Link>
             <h3>Your Cart</h3>
             <div className="buyer-cart-items">
                 {cartItems.map((item) => (

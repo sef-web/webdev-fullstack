@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import API_URL from '../../../config/api';
 import './ReviewDetails.css';
 
@@ -25,6 +26,7 @@ const ViewOrder = () => {
 
     return (
         <div>
+            <Link to="/sellerpage" style={{ display: 'inline-block', margin: '15px', padding: '8px 16px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>← Back to Seller Page</Link>
             {reviews.length > 0 ? (
                 <div className="Review-Details">
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import API_URL from '../../../config/api';
 import './IncomeDetails.css';
 
@@ -35,7 +36,7 @@ const IncomeDetails = () => {
 
     return (
         <div className="income-details-container">
-            
+            <Link to="/sellerpage" style={{ display: 'inline-block', marginBottom: '15px', padding: '8px 16px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>← Back to Seller Page</Link>
             <div className="income-box">
             <h4>Income Overview</h4>
             <table className="income-overview">

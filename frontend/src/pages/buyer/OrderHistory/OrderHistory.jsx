@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import API_URL from '../../../config/api';
 import './OrderHistory.css';
 
@@ -38,6 +39,7 @@ const ViewOrder = () => {
 
     return (
         <div className="buyer-history-container">
+            <Link to="/buyerpage" style={{ display: 'inline-block', marginBottom: '15px', padding: '8px 16px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>← Back to Shop</Link>
             <h4 className="history-title">Purchase History</h4>
             <div className="purchases-history">
                 {orderHistory.map((history) => (

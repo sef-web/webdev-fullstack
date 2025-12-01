@@ -16,6 +16,7 @@ const AddProduct = () => {
         stock_quantity: null,
         seller_id: sellerId || "" // prefill if available
     });
+    const [isUploading, setIsUploading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -26,18 +27,32 @@ const AddProduct = () => {
         e.preventDefault();
         try {
             await axios.post(`${API_URL}/products`, product);
-            navigate("/");
+            navigate("/sellerpage");
         } catch (err) {
             console.log(err);
         }
     };
 
     const handleUploadImage = () => {
+        if (isUploading) {
+            alert("Upload already in progress. Please wait.");
+            return;
+        }
+        
+        setIsUploading(true);
         const folderPath = `products/seller_${sellerId || 'unknown'}`;
+        
         openUploadWidget({
             folder: folderPath,
-            onSuccess: (info) => setProduct((prev) => ({ ...prev, image: info.secure_url })),
-            onError: (err) => console.error('Upload failed:', err),
+            onSuccess: (info) => {
+                setProduct((prev) => ({ ...prev, image: info.secure_url }));
+                setIsUploading(false);
+                alert("Image uploaded successfully!");
+            },
+            onError: (err) => {
+                console.error('Upload failed:', err);
+                setIsUploading(false);
+            },
         });
     };
 
@@ -53,7 +68,9 @@ const AddProduct = () => {
             <input type="text" placeholder='Price' onChange={handleChange} name="price" />
             <div className='image-input-row'>
                 <input type="text" placeholder='Image URL' onChange={handleChange} name="image" value={product.image} />
-                <button type="button" onClick={handleUploadImage}>Upload Image</button>
+                <button type="button" onClick={handleUploadImage} disabled={isUploading}>
+                    {isUploading ? 'Uploading...' : 'Upload Image'}
+                </button>
             </div>
             {product.image && (
                 <img src={product.image} alt="Preview" style={{ maxWidth: '120px', display: 'block', marginTop: '8px' }} />
