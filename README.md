@@ -1,25 +1,33 @@
 # E-Commerce CRUD Web Application (SERN Stack)
 
-A full-stack e-commerce platform built to simulate real-world online shopping operations. This application demonstrates complete **CRUD (Create, Read, Update, Delete)** functionality for managing products, users, orders, and more.
+A full-stack e-commerce platform built to simulate real-world online shopping operations. This application demonstrates complete **CRUD (Create, Read, Update, Delete)** functionality for managing products, users, orders, and more, deployed on modern cloud infrastructure.
 
-## Project Overview
+## Live Demo
 
-The purpose of this project was to develop a robust, data-driven web application using the **SERN Stack** (SQL, Express, React, Node.js). It serves as a comprehensive platform where admins can manage inventory and users can browse products, manage carts, and place orders.
+**[https://marketly-x382.onrender.com]**
 
-**Live Demo:** [Insert Your Render Link Here]
+*(Note: The application is hosted on Render's free tier. Please allow 30-50 seconds for the server to "wake up" on the initial load.)*
 
-## Tech Stack
+## Tech Stack & Infrastructure
 
+This project uses the **SERN Stack** (SQL, Express, React, Node.js) and leverages cloud services for a production-grade environment.
+
+### **Core Stack**
 * **Frontend:** React.js, HTML5, CSS3, JavaScript
 * **Backend:** Node.js, Express.js
-* **Database:** MySQL
+* **Database:** MySQL (Hosted on **Aiven**)
+
+### **Cloud & DevOps**
+* **Deployment:** **Render** (Web Services & Static Site Hosting)
+* **Database Cloud:** **Aiven** (Managed MySQL)
+* **Media Storage:** **Cloudinary** (For product image optimization and hosting)
 * **Tools:** VS Code, Git, Postman
 
 ## Key Features
 
 ### 1. Product Management
 * **Complete CRUD:** Admins can Create, Read, Update, and Delete products.
-* **Details:** Manages product Name, Price, Description, Quantity, and Images.
+* **Details:** Manages product Name, Price, Description, Quantity, and Images via Cloudinary.
 * **Inventory Control:** Automated notifications for low-stock items.
 * **Advanced Filtering:** Users can filter products by Price, Rating, and Category.
 
@@ -27,20 +35,16 @@ The purpose of this project was to develop a robust, data-driven web application
 * **Secure Access:** User registration and login with hashed passwords.
 * **Profile Management:** Users can update their profile details (Address, Phone) and delete accounts.
 * **Role-Based Access:** Distinction between `Customer` and `Admin` roles.
-* **Security:** Implemented Two-Factor Authentication (2FA) for login and Password Reset functionality.
 
 ### 3. Shopping Cart & Orders
 * **Dynamic Cart:** Users can add items, update quantities, view totals, and clear the cart.
-* **State Persistence:** Cart state is saved, allowing users to log out and return later without losing items.
+* **State Persistence:** Cart state is saved in the database, allowing users to log out and return later.
 * **Promotions:** Support for discount codes during checkout.
 * **Order Tracking:** Users can place orders and track status (Pending, Shipped).
 
-### 4. Categories & Reviews
-* **Organization:** Products are organized into a hierarchy with subcategories.
-* **Analytics:** System tracks and displays "Popular Categories" based on user activity.
-* **Social Proof:** Users can leave, edit, and delete product reviews with ratings.
-
 ## Installation & Setup
+
+If you want to run this project locally:
 
 1.  **Clone the repository:**
     ```bash
@@ -48,17 +52,32 @@ The purpose of this project was to develop a robust, data-driven web application
     cd webdev-fullstack
     ```
 
-2.  **Install Dependencies (Backend & Frontend):**
+2.  **Install Dependencies:**
     ```bash
+    # Install Backend
     cd server
     npm install
+
+    # Install Frontend
     cd ../client
     npm install
     ```
 
-3.  **Setup Database:**
-    * Import the provided SQL schema into your MySQL database.
-    * Configure your `.env` file with your database credentials.
+3.  **Environment Variables:**
+    Create a `.env` file in the `server` folder with the following credentials:
+    ```env
+    # Database (Aiven or Local MySQL)
+    DB_HOST=your-aiven-mysql-host
+    DB_USER=your-aiven-user
+    DB_PASSWORD=your-aiven-password
+    DB_NAME=defaultdb
+    DB_PORT=your-aiven-port
+
+    # Cloudinary (Image Uploads)
+    CLOUDINARY_CLOUD_NAME=your-cloud-name
+    CLOUDINARY_API_KEY=your-api-key
+    CLOUDINARY_API_SECRET=your-api-secret
+    ```
 
 4.  **Run the App:**
     ```bash
@@ -71,6 +90,6 @@ The purpose of this project was to develop a robust, data-driven web application
     npm start
     ```
 
-## 📜 License
+## License
 
 This project was created for educational purposes as part of a Full-Stack Web Development course.
